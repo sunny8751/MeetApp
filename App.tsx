@@ -4,6 +4,8 @@ import { createAppContainer, createStackNavigator } from 'react-navigation';
 import { createStore } from 'redux';
 import Reducers from './src/reducers/Reducers';
 import MyEvents from './src/components/MyEvents';
+import EventOverview from './src/components/EventOverview';
+import CreateEvent from './src/components/CreateEvent';
 
 export interface MyStore {
     count: number;
@@ -13,6 +15,8 @@ let store = createStore<MyStore>(Reducers);
 
 let RootStack = createStackNavigator({
     MyEvents: MyEvents,
+    EventOverview: EventOverview,
+    CreateEvent: CreateEvent
 });
 
 let Navigation = createAppContainer(RootStack);

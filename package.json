@@ -8,7 +8,11 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@babel/runtime": "^7.5.5",
     "expo": "^34.0.3",
+    "fbjs": "^1.0.0",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0",
     "react": "16.8.6",
     "react-dom": "^16.8.6",
     "react-native": "https://github.com/expo/react-native/archive/sdk-34.0.0.tar.gz",
@@ -16,7 +20,8 @@
     "react-native-web": "^0.11.5",
     "react-navigation": "^3.11.1",
     "react-redux": "^7.1.0",
-    "redux": "^3.7.2"
+    "redux": "^3.7.2",
+    "shade-blend-color": "^1.0.0"
   },
   "devDependencies": {
     "@types/react": "^16.8.24",
