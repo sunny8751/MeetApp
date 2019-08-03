@@ -5,21 +5,49 @@ import { createStore } from 'redux';
 import Reducers from './src/reducers/Reducers';
 import MyEvents from './src/components/MyEvents';
 import EventOverview from './src/components/EventOverview';
-import CreateEvent from './src/components/CreateEvent';
+import AddEvent from './src/components/AddEvent';
 
 export interface MyStore {
     count: number;
 }
 
-let store = createStore<MyStore>(Reducers);
+const store = createStore<MyStore>(Reducers);
 
-let RootStack = createStackNavigator({
+const routes = {
     MyEvents: MyEvents,
     EventOverview: EventOverview,
-    CreateEvent: CreateEvent
+    AddEvent: AddEvent
+};
+
+const fade = (props) => {
+    const {position, layout, scene} = props
+    const index = scene.index;
+    const width = layout.initWidth;
+    const height = layout.initHeight;
+    const translateX = position.interpolate({
+        inputRange: [index - 1, index, index + 1],
+        outputRange: [width, 0, 0]
+    });
+    const translateY = 0
+    const opacity = position.interpolate({
+        inputRange: [index - 0.7, index, index + 0.7],
+        outputRange: [0.3, 1, 0.3]
+    });
+    return {
+        opacity,
+        transform: [{translateX}, {translateY}]
+    }
+}
+
+const RootStack = createStackNavigator(routes, {
+    transitionConfig: () => ({
+        screenInterpolator: (props) => {
+            return fade(props);
+        }
+    })
 });
 
-let Navigation = createAppContainer(RootStack);
+const Navigation = createAppContainer(RootStack);
 
 export default class App extends React.Component {
     render() {

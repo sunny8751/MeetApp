@@ -6,7 +6,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { increment, decrement } from '../actions/Actions';
 import EventsList from './EventsList';
-import { Button } from './UI';
+import { Header, Button, Container } from './UI';
 import { AntDesign } from '@expo/vector-icons';
 
 export interface MyEventsProps {
@@ -15,8 +15,8 @@ export interface MyEventsProps {
 
 class MyEvents extends React.Component<MyEventsProps | any> {
     static navigationOptions = {
-        title: `My Events`,
-        headerStyle: Styles.headerStyle
+        // headerTitleStyle: Styles.headerTitleStyle
+        header: null
     };
 
     constructor(props) {
@@ -24,20 +24,22 @@ class MyEvents extends React.Component<MyEventsProps | any> {
         this.convertToSections = this.convertToSections.bind(this);
         this.createNewEvent = this.createNewEvent.bind(this);
         this.getAddButton = this.getAddButton.bind(this);
+        // this.handleOnScroll = this.handleOnScroll.bind(this);
         const data = {
             events: [
                 {
-                    name: 'Basketball practice with some other text in here for giggles',
+                    name: 'Basketball practice with other text here',
                     public: true,
                     startDate: Date.now(),
                     endDate: Date.now() + 2 * 60*60*1000,
-                    location: 'KFPC'
+                    location: 'Gym'
                 },
                 {
                     name: 'Dinner',
                     public: false,
                     startDate: Date.now() + 1000,
-                    location: 'HMart'
+                    endDate: Date.now() + 1000 + 1 * 60*60*1000,
+                    location: 'Restaurant'
                 },
                 {
                     name: 'Running',
@@ -50,14 +52,22 @@ class MyEvents extends React.Component<MyEventsProps | any> {
                     name: 'Movie',
                     public: false,
                     startDate: Date.now() + 3 * 86400000,
-                    endDate: Date.now() + 2 * 86400000 + 3 * 60*60*1000,
-                    location: 'AMC Theater'
+                    endDate: Date.now() + 3 * 86400000 + 3 * 60*60*1000,
+                    location: 'Theater'
+                },
+                {
+                    name: 'Lunch',
+                    public: false,
+                    startDate: Date.now() + 5 * 86400000 + 15 * 60*60*1000,
+                    endDate: Date.now() + 5 * 86400000 + 16 * 60*60*1000,
+                    location: 'Theater'
                 },
             ]
         };
         this.state = {
             sections: this.convertToSections(data)
         };
+        // this.createNewEvent();
     }
 
     convertToSections(data) {
@@ -85,23 +95,46 @@ class MyEvents extends React.Component<MyEventsProps | any> {
     }
 
     createNewEvent() {
-        this.props.navigation.navigate('CreateEvent');
+        this.props.navigation.navigate('AddEvent');
     }
 
     getAddButton(): JSX.Element {
         return (
-            <Button onPress={this.createNewEvent} style={Styles.addButton}>
-                <AntDesign name="plus" size={35}/>
+            <Button onPress={this.createNewEvent} style={Styles.addButtonFloating}>
+                <AntDesign name="plus" size={35} color={Styles.colors.green}/>
             </Button>
         );
     }
 
+    // handleOnScroll({nativeEvent}) {
+    //     const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+    //         const paddingToBottom = 20;
+    //         return layoutMeasurement.height + contentOffset.y >=
+    //             contentSize.height - paddingToBottom;
+    //     };
+        
+    //     if (isCloseToBottom(nativeEvent)) {
+    //         console.log("reached end");
+    //     }
+    // }
+
     render() {
         return (
-            <>
-                <EventsList sections={this.state['sections']} />
+            <Container
+                title={'My Events'}
+                navigation={this.props.navigation}
+                finishComponent={
+                    <AntDesign name="plus" size={35}/>
+                }
+                onFinish={this.createNewEvent}
+            >
+                <EventsList
+                    sections={this.state['sections']}
+                    // onScroll={this.handleOnScroll}
+                    // scrollEventThrottle={300}
+                />
                 {this.getAddButton()}
-            </>
+            </Container>
         );
     }
 }
@@ -111,12 +144,12 @@ const mapStateToProps = (state) => {
       count: state.count
     };
 };
-  
+
 const mapDispatchToProps = {
     increment,
     decrement
 };
-  
+
 export default connect(
     mapStateToProps,
     mapDispatchToProps

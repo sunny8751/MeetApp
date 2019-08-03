@@ -1,7 +1,8 @@
 import colors, { colorSchemes } from './colors';
+import { Platform } from 'react-native';
 
-export const headerStyle = {
-    backgroundColor: colors.lightblue
+export const header = {
+    backgroundColor: colors.white
 }
 
 export const text = {
@@ -17,6 +18,11 @@ export const flex = {
     flex: 1
 }
 
+export const leftRightView = {
+    ...horizontalLayout,
+    justifyContent: 'space-between'
+}
+
 export const centerRight = {
     marginLeft: "auto",
     marginTop: "auto",
@@ -24,8 +30,8 @@ export const centerRight = {
 }
 
 export const shadow = {
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
     shadowColor: colors.black,
     shadowOffset: { height: 3, width: 3 },
 };
@@ -40,7 +46,6 @@ export const sectionTitle = {
 export const cardContainer = {
     // ...shadow,
     // backgroundColor: colors.lightblue,
-    ...horizontalLayout,
     marginLeft: 20,
     marginRight: 20,
     marginBottom: 5,
@@ -50,6 +55,8 @@ export const cardContainer = {
 
 export const cardSubheaderText = {
     ...text,
+    fontWeight: 'bold',
+    fontSize: 16
     // color: colors.white,
 };
 
@@ -68,14 +75,56 @@ export const cardLocationText = {
 };
 
 export const addButton = {
-    position: 'absolute',
     bottom: 30,
     padding: 15,
-    paddingLeft: 60,
-    paddingRight: 60,
     borderRadius: 50,
     alignSelf: 'center',
-    backgroundColor: colors.greenUI
+    backgroundColor: colors.lightgreen
+}
+
+export const addButtonFloating = {
+    ...addButton,
+    // ...shadow,
+    position: 'absolute',
+    paddingLeft: 60,
+    paddingRight: 60,
+}
+
+export const headerView = {
+    ...flex,
+    padding: 15,
+    marginTop: Platform.OS === 'ios' ? 20 : 0,
+}
+
+export const headerText = {
+    color: colors.black,
+    fontSize: 22,
+    fontWeight: 'bold'
+}
+
+export const headerTitle = {
+    ...headerText,
+    color: colors.black,
+    textAlign: 'left',
+    fontSize: 26,
+    fontWeight: 'bold',
+    paddingTop: 15
+}
+
+export const headerButton = {
+    backgroundColor: colors.grey,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center'
+}
+
+export const switchText = {
+    ...text,
+    fontWeight: 'bold',
+}
+
+export const extraBottomSpace = {
+    paddingBottom: 100
 }
 
 export {

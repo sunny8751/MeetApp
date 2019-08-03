@@ -30,12 +30,15 @@ class EventsList extends React.Component<EventsListProps> {
     }
 
     render() {
+        const {sections, ...rest} = this.props;
         return (
             <SectionList
+                contentContainerStyle={Styles.extraBottomSpace}
                 renderItem={({item, index, section}) => this.renderItem(item, index, section) }
                 renderSectionHeader={({section: {sectionTitle}}) => this.renderSectionHeader(sectionTitle) }
-                sections={this.props.sections}
+                sections={sections}
                 keyExtractor={(item, index) => item + index}
+                {...rest}
                 // stickySectionHeadersEnabled={false}
             />
         );
