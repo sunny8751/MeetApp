@@ -11,8 +11,23 @@ import TextInputCard from './TextInputCard';
 import DatePicker from './DatePicker';
 import DatePickerCard from './DatePickerCard';
 import Chat from './Chat';
+import FriendSelect from './FriendSelect';
 import { SectionList } from 'react-native';
 
 export {
-    Button, Card, Text, View, SectionList, Header, Container, FlatList, ScrollView, TextInput, TextInputCard, DatePicker, DatePickerCard, Chat
+    Button,
+    Card,
+    Text,
+    View,
+    SectionList,
+    Header,
+    Container,
+    FlatList,
+    ScrollView,
+    TextInput,
+    TextInputCard,
+    DatePicker,
+    DatePickerCard,
+    Chat,
+    FriendSelect
 };

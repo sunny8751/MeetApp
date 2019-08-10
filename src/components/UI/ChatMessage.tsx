@@ -54,7 +54,6 @@ class ChatMessage extends React.Component {
         }
 
         const avatarProps = this.getInnerComponentProps();
-        console.log(avatarProps);
         return (
             <Avatar
                 {...avatarProps}

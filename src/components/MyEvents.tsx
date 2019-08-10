@@ -28,7 +28,7 @@ class MyEvents extends React.Component<MyEventsProps | any> {
         const data = {
             events: [
                 {
-                    name: 'Basketball practice with other text here',
+                    name: 'Basketball practice',
                     public: true,
                     startDate: Date.now(),
                     endDate: Date.now() + 2 * 60*60*1000,
@@ -67,7 +67,7 @@ class MyEvents extends React.Component<MyEventsProps | any> {
         this.state = {
             sections: this.convertToSections(data)
         };
-        // this.createNewEvent();
+        this.createNewEvent();
     }
 
     convertToSections(data) {

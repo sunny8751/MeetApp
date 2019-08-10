@@ -6,6 +6,7 @@ import Reducers from './src/reducers/Reducers';
 import MyEvents from './src/components/MyEvents';
 import EventOverview from './src/components/EventOverview';
 import AddEvent from './src/components/AddEvent';
+import InviteFriends from './src/components/InviteFriends';
 
 export interface MyStore {
     count: number;
@@ -16,7 +17,8 @@ const store = createStore<MyStore>(Reducers);
 const routes = {
     MyEvents: MyEvents,
     EventOverview: EventOverview,
-    AddEvent: AddEvent
+    AddEvent: AddEvent,
+    InviteFriends: InviteFriends
 };
 
 const fade = (props) => {
@@ -40,6 +42,7 @@ const fade = (props) => {
 }
 
 const RootStack = createStackNavigator(routes, {
+    // initialRouteName: 'InviteFriends',
     transitionConfig: () => ({
         screenInterpolator: (props) => {
             return fade(props);

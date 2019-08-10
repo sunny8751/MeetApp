@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as Styles from '../../styles/styles';
 import { Animated, TouchableOpacity } from 'react-native';
-import Foo from './Foo';
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 

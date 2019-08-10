@@ -1,32 +1,31 @@
 {
-  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "eject": "expo eject"
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "web": "expo start --web"
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5",
+    "@react-native-community/cli": "^2.8.3",
     "emoji-utils": "^1.0.1",
     "expo": "^34.0.3",
     "fbjs": "^1.0.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
-    "react": "16.8.6",
+    "react": "16.8.3",
     "react-dom": "^16.8.6",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-34.0.0.tar.gz",
-    "react-native-collapsible": "^1.5.1",
+    "react-native": "0.59.8",
     "react-native-gesture-handler": "^1.3.0",
     "react-native-gifted-chat": "^0.9.11",
+    "react-native-reanimated": "~1.1.0",
     "react-native-switch-selector": "^1.1.14",
+    "react-native-unimodules": "~0.5.2",
     "react-native-web": "^0.11.5",
     "react-navigation": "^3.11.1",
     "react-redux": "^7.1.0",
     "redux": "^3.7.2",
-    "shade-blend-color": "^1.0.0",
-    "tcomb-form-native": "^0.6.20"
+    "shade-blend-color": "^1.0.0"
   },
   "devDependencies": {
     "@types/react": "^16.8.24",

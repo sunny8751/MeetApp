@@ -31,8 +31,6 @@ class AddEvent extends React.Component<AddEventProps | any> {
             name: '',
             location: '',
             publicInvite: false,
-            startDate: getNextHour(),
-            endDate: moment(getNextHour()).add(1, 'hour').toDate()
         }
     }
 
@@ -42,8 +40,7 @@ class AddEvent extends React.Component<AddEventProps | any> {
 
     handleOnFinish() {
         if (!this.isFinished()) { return; }
-        console.log("Add event");
-        this.props.navigation.goBack();
+        this.props.navigation.navigate('InviteFriends', {event: this.props});
     }
 
     getTimeString(date: Date) {
@@ -63,7 +60,7 @@ class AddEvent extends React.Component<AddEventProps | any> {
         return (
             <Card
                 backgroundColor={Styles.colors.white}
-                style={{padding: 0, margin: 0, marginRight: 0, marginBottom: -5, width: 200, flexDirection: 'col'}}
+                style={{padding: 0, margin: 0, marginRight: 0, marginBottom: -5, width: 200, flexDirection: 'column'}}
             >
                 <View style={{flex: 1}}/>
                 <SwitchSelector
@@ -89,7 +86,7 @@ class AddEvent extends React.Component<AddEventProps | any> {
         return (
             <Container
                 navigation={this.props.navigation}
-                finishComponent={<Text style={finishComponentStyle}>Add</Text>}
+                finishComponent={<Text style={finishComponentStyle}>Next</Text>}
                 onFinish={this.handleOnFinish}
                 titleElementOverride={
                     <View style={Styles.leftRightView}>
@@ -101,17 +98,21 @@ class AddEvent extends React.Component<AddEventProps | any> {
                 <ScrollView contentContainerStyle={Styles.extraBottomSpace}>
                     <TextInputCard
                         title={"Name"}
-                        onChangeText={(text) => this.setState({name: text})}
+                        handleChangeText={(text) => this.setState({name: text})}
                         textValue={this.state['name']}
                         placeholder={"Lunch"}
                         style={styles.inputText}
+                        handleClearPress={() => this.setState({name: ''})}
                     />
                     <TextInputCard
                         title={"Location"}
-                        onChangeText={(text) => this.setState({location: text})}
+                        handleChangeText={(text) => this.setState({location: text})}
                         textValue={this.state['location']}
                         placeholder={"Type to search a location"}
                         style={styles.inputText}
+                        optional={true}
+                        optionalText={"Add location"}
+                        handleClearPress={() => this.setState({location: ''})}
                     />
 
                     <DatePickerCard
@@ -126,9 +127,13 @@ class AddEvent extends React.Component<AddEventProps | any> {
                         timeText={(
                             <Text style={[Styles.text, styles.timeText]}>{this.getTimeString(this.state['startDate'])}</Text>
                         )}
+                        optional={true}
+                        optionalText={"Add start time"}
+                        onOptionalPress={() => this.setState({startDate: getNextHour()})}
                     />
 
-                    <DatePickerCard
+                    {this.state['startDate'] ? (
+                        <DatePickerCard
                         title={"End time"}
                         onDateChange={(date) => this.setState({endDate: date})}
                         date={this.state['endDate']}
@@ -142,15 +147,20 @@ class AddEvent extends React.Component<AddEventProps | any> {
                                 <Text style={[Styles.text, styles.timeText]}>{this.getTimeElapsed(this.state['startDate'], this.state['endDate'])}</Text>
                             </View>
                         )}
+                        optional={this.state['startDate'] !== undefined}
+                        optionalText={"Add end time"}
+                        onOptionalPress={() => this.setState({endDate: moment(this.state['startDate']).add(1, 'hour').toDate()})}
                     />
+                    ) : <View />}
 
                     <TextInputCard
                         title={"Description"}
-                        onChangeText={(text) => this.setState({description: text})}
+                        handleChangeText={(text) => this.setState({description: text})}
                         textValue={this.state['description']}
                         placeholder={"Celebrate my promotion!"}
                         optional={true}
                         optionalText={"Add description"}
+                        multiline
                     />
                 </ScrollView>
             </Container>

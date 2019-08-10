@@ -14,9 +14,9 @@ export const getNextHour = () => {
     return moment().add(1, 'hour').startOf('hour').toDate();
 }
 
-export const getTimeString = (startDate: Date, endDate: Date) => {
+export const getTimeString = (startDate: Date, endDate?: Date) => {
     const getString = (date) => moment.duration(moment(date).diff(moment())).asMinutes() <= 1 ? 'Now' : moment(date).format('LT');
-    return getString(startDate) + ' to ' + getString(endDate);
+    return getString(startDate) + endDate ? (' to ' + getString(endDate)) : '';
 }
 
 export const getTimeColor = (date, hoursUntilTimeWarning = 2) => {
