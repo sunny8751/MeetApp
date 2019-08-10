@@ -15,11 +15,11 @@ class Chat extends React.Component {
         this.setState({
             messages: [{
                 _id: 1,
-                text: 'Hello developer',
+                text: 'I heard this place is really good!!',
                 createdAt: new Date(),
                 user: {
                     _id: 2,
-                    name: 'React Native',
+                    name: 'Bob',
                     avatar: 'https://placeimg.com/140/140/any',
                 },
             }],

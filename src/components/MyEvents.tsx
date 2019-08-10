@@ -8,6 +8,7 @@ import { increment, decrement } from '../actions/Actions';
 import EventsList from './EventsList';
 import { Header, Button, Container } from './UI';
 import { AntDesign } from '@expo/vector-icons';
+import {getNextHour } from '../utils/Utils';
 
 export interface MyEventsProps {
 
@@ -28,38 +29,38 @@ class MyEvents extends React.Component<MyEventsProps | any> {
         const data = {
             events: [
                 {
-                    name: 'Basketball practice',
-                    public: true,
-                    startDate: Date.now(),
-                    endDate: Date.now() + 2 * 60*60*1000,
-                    location: 'Gym'
-                },
-                {
                     name: 'Dinner',
                     public: false,
-                    startDate: Date.now() + 1000,
-                    endDate: Date.now() + 1000 + 1 * 60*60*1000,
+                    startDate: getNextHour(),
+                    endDate: moment(getNextHour()).add(1, 'hours').toDate(),
                     location: 'Restaurant'
+                },
+                {
+                    name: 'Basketball practice',
+                    public: true,
+                    startDate: moment(getNextHour()).add(2, 'hours').toDate(),
+                    endDate: moment(getNextHour()).add(4, 'hours').toDate(),
+                    location: 'Gym'
                 },
                 {
                     name: 'Running',
                     public: false,
-                    startDate: Date.now() + 1 * 86400000,
-                    endDate: Date.now() + 1 * 86400000 + 1 * 60*60*1000,
+                    startDate: moment(getNextHour()).add(19.5, 'hours').toDate(),
+                    endDate: moment(getNextHour()).add(21, 'hours').toDate(),
                     location: 'Park'
                 },
                 {
                     name: 'Movie',
                     public: false,
-                    startDate: Date.now() + 3 * 86400000,
-                    endDate: Date.now() + 3 * 86400000 + 3 * 60*60*1000,
+                    startDate: moment(getNextHour()).add(74.5, 'hours').toDate(),
+                    endDate: moment(getNextHour()).add(77, 'hours').toDate(),
                     location: 'Theater'
                 },
                 {
                     name: 'Lunch',
                     public: false,
-                    startDate: Date.now() + 5 * 86400000 + 15 * 60*60*1000,
-                    endDate: Date.now() + 5 * 86400000 + 16 * 60*60*1000,
+                    startDate: moment(getNextHour()).add(138, 'hours').toDate(),
+                    endDate: moment(getNextHour()).add(139, 'hours').toDate(),
                     location: 'Theater'
                 },
             ]
