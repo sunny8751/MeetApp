@@ -6,7 +6,7 @@ import moment from 'moment';
 import SwitchSelector from 'react-native-switch-selector';
 import { StyleSheet } from 'react-native';
 import { Container, TextInputCard, ScrollView, Text, Card, View, DatePicker, Button, DatePickerCard } from './UI';
-import { getDarkerColor, getLighterColor, getNextHour } from '../utils/Utils';
+import { getNextHour } from '../utils/Utils';
 
 export interface AddEventProps {
 
@@ -31,6 +31,8 @@ class AddEvent extends React.Component<AddEventProps | any> {
             name: '',
             location: '',
             publicInvite: false,
+            startDate: getNextHour(),
+            endDate: moment(getNextHour()).add(1, 'hour').toDate(),
         }
     }
 
@@ -40,7 +42,7 @@ class AddEvent extends React.Component<AddEventProps | any> {
 
     handleOnFinish() {
         if (!this.isFinished()) { return; }
-        this.props.navigation.navigate('InviteFriends', {event: this.props});
+        this.props.navigation.navigate('InviteFriends', {event: this.state});
     }
 
     getTimeString(date: Date) {
@@ -71,7 +73,7 @@ class AddEvent extends React.Component<AddEventProps | any> {
                     initial={0}
                     onPress={(value) => this.setState({publicInvite: value === "true"})}
                     buttonColor={Styles.colors.green}
-                    backgroundColor={getLighterColor(Styles.colors.grey)}
+                    backgroundColor={Styles.defaultColorScheme.lightColor}
                     textColor={styles.inputText.color}
                     textStyle={Styles.switchText}
                     selectedTextStyle={Styles.switchText}
@@ -82,11 +84,11 @@ class AddEvent extends React.Component<AddEventProps | any> {
     }
 
     render() {
-        const finishComponentStyle = [Styles.headerText, this.isFinished() ? {} : {color: Styles.colors.grey}];
+        const finishComponentStyle = [Styles.headerFinishComponent,  this.isFinished() ? {} : {color: Styles.defaultColorScheme.mediumColor}]
         return (
             <Container
                 navigation={this.props.navigation}
-                finishComponent={<Text style={finishComponentStyle}>Next</Text>}
+                finishComponent={ <Text style={finishComponentStyle}>Next</Text> }
                 onFinish={this.handleOnFinish}
                 titleElementOverride={
                     <View style={Styles.leftRightView}>
@@ -104,16 +106,6 @@ class AddEvent extends React.Component<AddEventProps | any> {
                         style={styles.inputText}
                         handleClearPress={() => this.setState({name: ''})}
                     />
-                    <TextInputCard
-                        title={"Location"}
-                        handleChangeText={(text) => this.setState({location: text})}
-                        textValue={this.state['location']}
-                        placeholder={"Type to search a location"}
-                        style={styles.inputText}
-                        optional={true}
-                        optionalText={"Add location"}
-                        handleClearPress={() => this.setState({location: ''})}
-                    />
 
                     <DatePickerCard
                         title={"Start time"}
@@ -127,13 +119,13 @@ class AddEvent extends React.Component<AddEventProps | any> {
                         timeText={(
                             <Text style={[Styles.text, styles.timeText]}>{this.getTimeString(this.state['startDate'])}</Text>
                         )}
-                        optional={true}
-                        optionalText={"Add start time"}
-                        onOptionalPress={() => this.setState({startDate: getNextHour()})}
+                        // optional={true}
+                        // optionalText={"Add start time"}
+                        // onOptionalPress={() => this.setState({startDate: getNextHour()})}
                     />
 
-                    {this.state['startDate'] ? (
-                        <DatePickerCard
+                    {/* {this.state['startDate'] ? ( */}
+                    <DatePickerCard
                         title={"End time"}
                         onDateChange={(date) => this.setState({endDate: date})}
                         date={this.state['endDate']}
@@ -147,11 +139,22 @@ class AddEvent extends React.Component<AddEventProps | any> {
                                 <Text style={[Styles.text, styles.timeText]}>{this.getTimeElapsed(this.state['startDate'], this.state['endDate'])}</Text>
                             </View>
                         )}
-                        optional={this.state['startDate'] !== undefined}
-                        optionalText={"Add end time"}
-                        onOptionalPress={() => this.setState({endDate: moment(this.state['startDate']).add(1, 'hour').toDate()})}
+                        // optional={this.state['startDate'] !== undefined}
+                        // optionalText={"Add end time"}
+                        // onOptionalPress={() => this.setState({endDate: moment(this.state['startDate']).add(1, 'hour').toDate()})}
                     />
-                    ) : <View />}
+                    {/* ) : <View />} */}
+
+                    <TextInputCard
+                        title={"Location"}
+                        handleChangeText={(text) => this.setState({location: text})}
+                        textValue={this.state['location']}
+                        placeholder={"Type to search a location"}
+                        style={styles.inputText}
+                        optional={true}
+                        optionalText={"Add location"}
+                        handleClearPress={() => this.setState({location: ''})}
+                    />
 
                     <TextInputCard
                         title={"Description"}

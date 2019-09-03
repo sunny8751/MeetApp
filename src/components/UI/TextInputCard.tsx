@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as Styles from '../../styles/styles';
 import { Text, Card, TextInput, View } from './';
-import { getDarkerColor, getLighterColor } from '../../utils/Utils';
 import withOptional from '../WithOptional/WithOptional';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -18,8 +17,8 @@ class TextInputCard extends React.Component<TextInputCardProps | any> {
     render() {
         const { title, handleChangeText, textValue, placeholder, multiline, handleClearPress } = this.props;
         return (
-            <Card backgroundColor={getLighterColor(Styles.colors.grey)} style={{marginBottom: 20}}>
-                <Text style={[Styles.cardSubheaderText, {color: getDarkerColor(Styles.colors.grey), paddingBottom: 5}]}>{title}</Text>
+            <Card backgroundColor={Styles.defaultColorScheme.lightColor} style={{marginBottom: 20}}>
+                <Text style={[Styles.cardSubheaderText, {color: Styles.defaultColorScheme.darkColor, paddingBottom: 5}]}>{title}</Text>
                 <View style={[Styles.horizontalLayout, {flex: 1}]}>
                     <TextInput
                         onChangeText={handleChangeText}

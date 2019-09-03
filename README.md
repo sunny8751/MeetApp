@@ -13,6 +13,7 @@ This app is implemented in React Native in order to cater to both Android and iO
 # Current Progress
 
 [Demo Video](https://youtu.be/ERdpSE_WIGk)
+
 ![My Events](/screenshots/IMG_0954.PNG?raw=true)
 ![Add Event](/screenshots/IMG_0952.PNG?raw=true)
 ![Invite Friends](/screenshots/IMG_0953.PNG?raw=true)

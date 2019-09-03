@@ -1,4 +1,4 @@
-import colors, { colorSchemes } from './colors';
+import colors, { colorSchemes, defaultColorScheme } from './colors';
 import { Platform } from 'react-native';
 
 export const header = {
@@ -6,7 +6,7 @@ export const header = {
 }
 
 export const text = {
-    color: colors.black,
+    color: defaultColorScheme.darkColor,
     fontSize: 20
 };
 
@@ -32,13 +32,13 @@ export const centerRight = {
 export const shadow = {
     shadowOpacity: 0.1,
     shadowRadius: 2,
-    shadowColor: colors.black,
+    shadowColor: defaultColorScheme.darkColor,
     shadowOffset: { height: 3, width: 3 },
 };
 
 export const sectionTitle = {
     ...text,
-    color: colors.grey,
+    color: defaultColorScheme.mediumColor,
     textAlign: 'center',
     marginTop: 10
 };
@@ -97,22 +97,29 @@ export const headerView = {
 }
 
 export const headerText = {
-    color: colors.black,
+    color: defaultColorScheme.darkColor,
     fontSize: 22,
     fontWeight: 'bold'
 }
 
 export const headerTitle = {
     ...headerText,
-    color: colors.black,
+    color: defaultColorScheme.darkColor,
     textAlign: 'left',
     fontSize: 26,
     fontWeight: 'bold',
     paddingTop: 15
 }
 
+export const headerFinishComponent = {
+    ...headerText,
+    padding: 5,
+    paddingLeft: 10,
+    paddingRight: 10
+}
+
 export const headerButton = {
-    backgroundColor: colors.grey,
+    backgroundColor: defaultColorScheme.mediumColor,
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center'
@@ -129,5 +136,6 @@ export const extraBottomSpace = {
 
 export {
     colors,
-    colorSchemes
+    colorSchemes,
+    defaultColorScheme
 };

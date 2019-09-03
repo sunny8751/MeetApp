@@ -16,9 +16,7 @@ class EventsList extends React.Component<EventsListProps> {
 
     renderItem(item: EventItemProps, index, section) {
         return (
-            <EventItem
-                {...item}
-            />
+            <EventItem eventId={item}/>
         );
     }
 

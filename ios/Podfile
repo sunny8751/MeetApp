@@ -4,6 +4,11 @@ require_relative '../node_modules/react-native-unimodules/cocoapods'
 
 target 'MeetApp' do
   # Pods for MeetApp
+
+  # Required by RNFirebase
+  pod 'Firebase/Core', '~> 6.3.0'
+  pod 'Firebase/Firestore'
+  
   pod 'React', :path => '../node_modules/react-native', :subspecs => [
     'Core',
     'CxxBridge',
@@ -29,7 +34,13 @@ target 'MeetApp' do
   pod 'RNGestureHandler', :podspec => '../node_modules/react-native-gesture-handler/RNGestureHandler.podspec'
   pod 'RNReanimated', :podspec => '../node_modules/react-native-reanimated/RNReanimated.podspec'
 
+  # pod 'RNFirebase', :path => '../node_modules/react-native-firebase/ios'
+
   use_unimodules!
+
+  # pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
+
+  # pod 'RNFBFirestore', :path => '../node_modules/@react-native-firebase/firestore'
 
   target 'MeetAppTests' do
     inherit! :search_paths

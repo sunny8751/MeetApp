@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Platform } from 'react-native';
 import { Provider } from 'react-redux';
 import { createAppContainer, createStackNavigator } from 'react-navigation';
 import { createStore } from 'redux';
@@ -7,19 +8,13 @@ import MyEvents from './src/components/MyEvents';
 import EventOverview from './src/components/EventOverview';
 import AddEvent from './src/components/AddEvent';
 import InviteFriends from './src/components/InviteFriends';
+import InfoModal from './src/components/InfoModal';
 
 export interface MyStore {
     count: number;
 }
 
 const store = createStore<MyStore>(Reducers);
-
-const routes = {
-    MyEvents: MyEvents,
-    EventOverview: EventOverview,
-    AddEvent: AddEvent,
-    InviteFriends: InviteFriends
-};
 
 const fade = (props) => {
     const {position, layout, scene} = props
@@ -41,14 +36,42 @@ const fade = (props) => {
     }
 }
 
-const RootStack = createStackNavigator(routes, {
-    // initialRouteName: 'InviteFriends',
-    transitionConfig: () => ({
-        screenInterpolator: (props) => {
-            return fade(props);
-        }
-    })
-});
+const MainStack = createStackNavigator(
+    {
+        MyEvents: MyEvents,
+        EventOverview: EventOverview,
+        AddEvent: AddEvent,
+        InviteFriends: InviteFriends
+    }, 
+    {
+        // initialRouteName: 'InviteFriends',
+        transitionConfig: () => ({
+            screenInterpolator: (props) => {
+                return fade(props);
+            }
+        })
+    }
+);
+
+const RootStack = createStackNavigator(
+    {
+      Main: {
+        screen: MainStack,
+      },
+      InfoModal: {
+        screen: InfoModal,
+      },
+    },
+    {
+      mode: 'modal',
+      headerMode: 'none',
+      transparentCard: true,
+      cardStyle:{
+        backgroundColor: "transparent",
+        // opacity: Platform.OS === "android" ?  1 :  .5
+      },
+    }
+  );
 
 const Navigation = createAppContainer(RootStack);
 

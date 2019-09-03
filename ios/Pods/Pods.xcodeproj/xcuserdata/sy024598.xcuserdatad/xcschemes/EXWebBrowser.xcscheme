@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "1100"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'D5AB6257BAC3ACA31977A6FCE6540E39'
-               BlueprintName = 'EXWebBrowser'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libEXWebBrowser.a'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "9EB556EE511D43F3D5D7AAF51D8D0397"
+               BuildableName = "libEXWebBrowser.a"
+               BlueprintName = "EXWebBrowser"
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

@@ -5,6 +5,7 @@ import {View, Text, Button} from './';
 
 interface HeaderProps {
     navigation: any;
+    colorScheme?: any;
     title?: string;
     finishComponent?: JSX.Element;
     onFinish?: () => void;
@@ -12,6 +13,10 @@ interface HeaderProps {
 }
 
 class Header extends React.Component<HeaderProps | any> {
+    static defaultProps = {
+        colorScheme: Styles.defaultColorScheme,
+    };
+
     constructor(props) {
         super(props);
         this.shouldRenderBackButton = this.shouldRenderBackButton.bind(this);
@@ -24,24 +29,28 @@ class Header extends React.Component<HeaderProps | any> {
     }
 
     render() {
-        const { navigation, title, finishComponent, onFinish, titleElementOverride } = this.props;
-        (titleElementOverride);
+        const { navigation, colorScheme, title, finishComponent, onFinish, titleElementOverride } = this.props;
+        const headerButtonStyle = [Styles.headerButton, { backgroundColor: colorScheme.lightColor }];
         return (
             <View style={Styles.headerView}>
                 <View style={Styles.leftRightView}>
                     {this.shouldRenderBackButton() ? (
                         <Button onPress={() => navigation.goBack()}>
-                            <Feather name="chevron-left" size={40}/>
+                            <View style={headerButtonStyle}>
+                                <Feather name="chevron-left" size={40} style={{color: colorScheme.darkColor}}/>
+                            </View>
                         </Button>
                     ) : <View />}
                     {this.props.finishComponent ? (
                         <Button onPress={onFinish} style={{justifyContent: 'center'}}>
-                            {finishComponent}
+                            <View style={headerButtonStyle}>
+                                {finishComponent}
+                            </View>
                         </Button>
                     ) : <View />}
                 </View>
                 {titleElementOverride ? titleElementOverride : (
-                    title && <Text style={Styles.headerTitle}>{title}</Text>
+                    title ? <Text style={[Styles.headerTitle, {color: colorScheme.darkColor}]}>{title}</Text> : <View />
                 )}
             </View>
         );

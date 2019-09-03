@@ -2,8 +2,11 @@ import * as React from 'react';
 import * as Styles from '../styles/styles';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
-import { getDarkerColor, getLighterColor, getTimeColor, getTimeString } from '../utils/Utils';
+import { Ionicons } from '@expo/vector-icons';
+import { removeEvents } from '../actions/Actions';
+import { getTimeColor, getTimeString } from '../utils/Utils';
 import { Card, Container, View, Text, Header, Button, ScrollView, Chat } from './UI';
+import database, { myId } from '../database/Database';
 
 export interface EventOverviewProps {
 
@@ -23,27 +26,44 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
 
     constructor(props) {
         super(props);
+        this.openInfo = this.openInfo.bind(this);
+        this.deleteEvent = this.deleteEvent.bind(this);
+    }
+
+    async openInfo() {
+        const { eventId, colorScheme } = this.props.navigation.state.params;
+        console.log('open info', eventId);
+        this.props.navigation.navigate('InfoModal', { eventId, colorScheme })
+    }
+
+    async deleteEvent(eventId: string) {
+        database.removeEvent(eventId); // don't await
+        this.props.navigation.goBack();
+        this.props.removeEvents([eventId]);
     }
 
     render() {
-        const { name, publicInvite, startDate, endDate, location, description, invited, colorScheme } = this.props.navigation.state.params;
-        const mediumColor = colorScheme;
-        const lightColor = getLighterColor(mediumColor);
-        const darkColor = getDarkerColor(mediumColor);
+        const { eventId, colorScheme } = this.props.navigation.state.params;
+        if (!this.props.events[eventId]) {
+            return (<View />)
+        }
+        const { name, publicInvite, startDate, endDate, location, description, invited } = this.props.events[eventId];
         return (
             <Container
                 navigation={this.props.navigation}
-                style={{backgroundColor: lightColor}}
                 disableKeyboardAvoidingView={true}
                 titleElementOverride={(
                     <View>
-                        <Text style={Styles.headerTitle}>{name}</Text>
-                        {location && (
-                        <Text style={Styles.cardSubheaderText}>{location}</Text>
-                        )}
+                        <Text style={[Styles.headerTitle, {color: colorScheme.darkColor}]}>{name}</Text>
+                        {location ? <Text style={[Styles.cardSubheaderText, {color: colorScheme.mediumColor}]}>{location}</Text> : <View />}
                         <Text style={[Styles.cardSubheaderText, {color: getTimeColor(startDate)}]}>{getTimeString(startDate, endDate)}</Text>
                     </View>
                 )}
+                finishComponent={
+                    <Ionicons name="ios-information" size={45} color={colorScheme.darkColor} style={{ paddingLeft: 17, paddingRight: 17,  marginBottom: -5, marginTop: -5 }}/>
+                }
+                onFinish={this.openInfo}
+                colorScheme={colorScheme}
             >
                 {/* <ScrollView contentContainerStyle={Styles.extraBottomSpace}>
                     <Text>Hi</Text>
@@ -57,10 +77,12 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
 
 const mapStateToProps = (state) => {
     return {
+      events: state.events
     };
 };
   
 const mapDispatchToProps = {
+    removeEvents
 };
   
 export default connect(

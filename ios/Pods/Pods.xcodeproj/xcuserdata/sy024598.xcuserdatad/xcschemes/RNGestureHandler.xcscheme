@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "1100"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '9CBFCF7E981A576D945D1F5373F9893C'
-               BlueprintName = 'RNGestureHandler'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libRNGestureHandler.a'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B9E8F4CA2A4A8599389FEB665A9B96FF"
+               BuildableName = "libRNGestureHandler.a"
+               BlueprintName = "RNGestureHandler"
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

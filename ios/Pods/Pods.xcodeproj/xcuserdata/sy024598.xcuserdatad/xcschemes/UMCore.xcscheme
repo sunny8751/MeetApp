@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "1100"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '5C4DD44FBA540EFE7FF261683C514701'
-               BlueprintName = 'UMCore'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libUMCore.a'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DBCB1B4965863DDD3B9DED9A0918A526"
+               BuildableName = "libUMCore.a"
+               BlueprintName = "UMCore"
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

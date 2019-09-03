@@ -3,6 +3,9 @@ package com.meetapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.invertase.firebase.firestore.ReactNativeFirebaseFirestorePackage;
+import io.invertase.firebase.ReactNativeFirebaseAppPackage;
+import io.invertase.firebase.RNFirebasePackage;
 import com.swmansion.reanimated.ReanimatedPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -39,6 +42,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ReactNativeFirebaseFirestorePackage(),
+            new ReactNativeFirebaseAppPackage(),
+            new RNFirebasePackage(),
           new ReanimatedPackage(),
           new RNGestureHandlerPackage(),
           new ModuleRegistryAdapter(mModuleRegistryProvider)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "1100"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '9B286A6A147AE77FECC7F922EB886BED'
-               BlueprintName = 'EXSQLite'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libEXSQLite.a'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "27C58E660685BE3E439A7001A7DF3053"
+               BuildableName = "libEXSQLite.a"
+               BlueprintName = "EXSQLite"
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

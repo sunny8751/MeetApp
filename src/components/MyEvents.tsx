@@ -4,11 +4,12 @@ import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import _ from 'lodash';
 import moment from 'moment';
-import { increment, decrement } from '../actions/Actions';
+import { addEvents, setEvents } from '../actions/Actions';
 import EventsList from './EventsList';
 import { Header, Button, Container } from './UI';
 import { AntDesign } from '@expo/vector-icons';
 import {getNextHour } from '../utils/Utils';
+import database, { myId } from '../database/Database';
 
 export interface MyEventsProps {
 
@@ -19,72 +20,69 @@ class MyEvents extends React.Component<MyEventsProps | any> {
         // headerTitleStyle: Styles.headerTitleStyle
         header: null
     };
-
+    
     constructor(props) {
         super(props);
         this.convertToSections = this.convertToSections.bind(this);
         this.createNewEvent = this.createNewEvent.bind(this);
         this.getAddButton = this.getAddButton.bind(this);
-        // this.handleOnScroll = this.handleOnScroll.bind(this);
-        const data = {
-            events: [
-                {
-                    name: 'Dinner',
-                    public: false,
-                    startDate: getNextHour(),
-                    endDate: moment(getNextHour()).add(1, 'hours').toDate(),
-                    location: 'Restaurant'
-                },
-                {
-                    name: 'Basketball practice',
-                    public: true,
-                    startDate: moment(getNextHour()).add(2, 'hours').toDate(),
-                    endDate: moment(getNextHour()).add(4, 'hours').toDate(),
-                    location: 'Gym'
-                },
-                {
-                    name: 'Running',
-                    public: false,
-                    startDate: moment(getNextHour()).add(19.5, 'hours').toDate(),
-                    endDate: moment(getNextHour()).add(21, 'hours').toDate(),
-                    location: 'Park'
-                },
-                {
-                    name: 'Movie',
-                    public: false,
-                    startDate: moment(getNextHour()).add(74.5, 'hours').toDate(),
-                    endDate: moment(getNextHour()).add(77, 'hours').toDate(),
-                    location: 'Theater'
-                },
-                {
-                    name: 'Lunch',
-                    public: false,
-                    startDate: moment(getNextHour()).add(138, 'hours').toDate(),
-                    endDate: moment(getNextHour()).add(139, 'hours').toDate(),
-                    location: 'Theater'
-                },
-            ]
-        };
+        this.refresh = this.refresh.bind(this);
+
         this.state = {
-            sections: this.convertToSections(data)
+            sections: []
         };
-        this.createNewEvent();
+        // this.createNewEvent();
     }
 
-    convertToSections(data) {
+    async componentDidMount() {
+        // await database.removeEvent('jtYVcg6BGTIwI50gNHMZ');
+        await this.refresh();
+        // if (this._isMounted) {
+        //     this.setState({sections: this.convertToSections(this.props.events)});
+        // }
+    }
+
+    componentDidUpdate(prevProps) {
+      if(this.props.events != prevProps.events)
+      {
+        this.setState({sections: this.convertToSections(this.props.events)});
+      }
+    } 
+
+    async refresh() {
+        const eventIds = await database.getUser(myId, 'events');
+        let events = {};
+        for (const id of eventIds) {
+            const event = await database.getEvent(id);
+            if ((event.endDate ? event.endDate : moment(event.startDate).add(1, 'hour').toDate()) >= new Date()) {
+                events[id] = event;
+            }
+        }
+        this.props.setEvents(events);
+    }
+
+    convertToSections(events) {
         const getSectionTitle = (date) => {
             const eventDate = moment(date);
-            if (moment().isSame(eventDate, 'd')) {
-                return 'Today';
-            }
-            if (moment().add(1, 'days').isSame(eventDate, 'd')) {
-                return 'Tomorrow';
-            }
+            // if (moment().isSame(eventDate, 'd')) {
+            //     return 'Today';
+            // }
+            // if (moment().add(1, 'days').isSame(eventDate, 'd')) {
+            //     return 'Tomorrow';
+            // }
             return eventDate.format('MM/DD/YY');
         };
 
-        const groups = _.groupBy(data.events, function(event) {
-            return getSectionTitle(event.startDate);
+        let eventIds = Object.keys(events);
+        eventIds.sort(function(a,b) {
+            if (events[a].startDate == events[b].startDate) {
+                return events[a].endDate - events[b].endDate;
+            }
+            return events[a].startDate - events[b].startDate;
+        });
+
+        const groups = _.groupBy(eventIds, function(id) {
+            return getSectionTitle(events[id].startDate);
         });
         const sections = _.map(groups, function(group, day) {
             return {
@@ -125,7 +123,7 @@ class MyEvents extends React.Component<MyEventsProps | any> {
                 title={'My Events'}
                 navigation={this.props.navigation}
                 finishComponent={
-                    <AntDesign name="plus" size={35}/>
+                    <AntDesign name="plus" size={35} style={{ padding: 2 }}/>
                 }
                 onFinish={this.createNewEvent}
             >
@@ -142,13 +140,13 @@ class MyEvents extends React.Component<MyEventsProps | any> {
 
 const mapStateToProps = (state) => {
     return {
-      count: state.count
+      events: state.events
     };
 };
 
 const mapDispatchToProps = {
-    increment,
-    decrement
+    addEvents,
+    setEvents
 };
 
 export default connect(

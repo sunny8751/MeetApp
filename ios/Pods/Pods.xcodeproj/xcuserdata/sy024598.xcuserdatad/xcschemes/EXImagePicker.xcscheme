@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "1100"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'F06AE030F31D85C566C705CFF09A3176'
-               BlueprintName = 'EXImagePicker'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libEXImagePicker.a'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "9A7E4CFA3D0A965685884E61CE7D0D1D"
+               BuildableName = "libEXImagePicker.a"
+               BlueprintName = "EXImagePicker"
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

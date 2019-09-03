@@ -1,61 +1,76 @@
 import * as React from 'react';
 import * as Styles from '../styles/styles';
+import { connect } from 'react-redux';
 import moment from 'moment';
 import { withNavigation } from 'react-navigation';
 import { Feather } from '@expo/vector-icons';
+import { addEvents, setEvents } from '../actions/Actions';
 import { View, Text, Button, Card } from './UI';
-import { getDarkerColor, getLighterColor, getTimeString, getTimeColor } from '../utils/Utils';
+import { getTimeString, getTimeColor } from '../utils/Utils';
 
 export interface EventItemProps {
-    name: string,
-    publicInvite: boolean,
-    startDate?: Date,
-    endDate?: Date,
-    location?: string,
-    description?: string,
-    invited?: string[]
+    // name: string,
+    // publicInvite: boolean,
+    // startDate?: Date,
+    // endDate?: Date,
+    // location?: string,
+    // description?: string,
+    // invited?: string[]
+    eventId: string
 }
 
 class EventItem extends React.Component<EventItemProps | any> {
-    lightColor: string;
-    mediumColor: string;
-    darkColor: string;
+    colorScheme: any;
 
     constructor(props) {
         super(props);
         this.getColorScheme = this.getColorScheme.bind(this);
         this.handleOnPress = this.handleOnPress.bind(this);
 
-        this.mediumColor = this.getColorScheme();
-        this.lightColor = getLighterColor(this.mediumColor);
-        this.darkColor = getDarkerColor(this.mediumColor);
+        this.colorScheme = this.getColorScheme();
     }
 
     getColorScheme() {
+        const { events, eventId } = this.props;
         const colorSchemes = Styles.colorSchemes;
-        return colorSchemes[moment(this.props.startDate).date() % colorSchemes.length];
+        return colorSchemes[moment(events[eventId].startDate).date() % colorSchemes.length];
     }
 
     handleOnPress() {
-        this.props.navigation.navigate('EventOverview', {...this.props, colorScheme: this.mediumColor});
+        this.props.navigation.navigate('EventOverview', {eventId: this.props.eventId, colorScheme: this.colorScheme});
     }
 
     render() {
-        const {name, publicInvite, startDate, endDate, location, description, invited} = this.props;
+        const { events, eventId } = this.props;
+        const {name, publicInvite, startDate, endDate, location, description, invited} = events[eventId];
         return (
             <Button onPress={this.handleOnPress}>
-                <Card backgroundColor={this.lightColor} style={Styles.horizontalLayout}>
+                <Card backgroundColor={this.colorScheme.lightColor} style={Styles.horizontalLayout}>
                     <View style={Styles.flex}>
-                        <Text style={[Styles.cardHeaderText, {color: this.darkColor}]}>{name}</Text>
+                        <Text style={[Styles.cardHeaderText, {color: this.colorScheme.darkColor}]}>{name}</Text>
                         {/* {subheader && <Text style={[Styles.cardSubheaderText, {color: this.mediumColor}]}>{subheader}</Text>} */}
-                        {location && <Text style={[Styles.cardLocationText, {color: this.mediumColor}]}>{location}</Text>}
+                        {location ? <Text style={[Styles.cardLocationText, {color: this.colorScheme.mediumColor}]}>{location}</Text> : <View/>}
                         <Text style={[Styles.cardLocationText, {color: getTimeColor(startDate)}]}>{getTimeString(startDate, endDate)}</Text>
                     </View>
-                    <Feather name="chevron-right" size={40} color={this.darkColor} style={Styles.centerRight} />
+                    <Feather name="chevron-right" size={40} color={this.colorScheme.darkColor} style={Styles.centerRight} />
                 </Card>
             </Button>
         );
     }
 }
 
-export default withNavigation(EventItem);
+const mapStateToProps = (state) => {
+    return {
+      events: state.events
+    };
+};
+
+const mapDispatchToProps = {
+    addEvents,
+    setEvents
+};
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(withNavigation(EventItem));

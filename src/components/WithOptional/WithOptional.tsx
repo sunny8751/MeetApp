@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as Styles from '../../styles/styles';
 import { Text, Card, TextInput, Button, View } from '../UI';
-import { getDarkerColor, getLighterColor } from '../../utils/Utils';
 
 export interface WithOptionalProps {
     optional?: boolean;
@@ -35,7 +34,7 @@ const withOptional = <P extends object>(WrappedComponent: React.ComponentType<P>
                         <WrappedComponent {...rest as P} />
                     ) : (
                         <Button onPress={this.onOptionalPress}>
-                            <Card backgroundColor={getLighterColor(Styles.colors.grey)} style={{marginBottom: 20}}>
+                            <Card backgroundColor={Styles.defaultColorScheme.lightColor} style={{marginBottom: 20}}>
                                     <Text style={[Styles.cardSubheaderText, {color: Styles.colors.green, textAlign: 'center'}]}>{optionalText}</Text>
                             </Card>
                         </Button>

@@ -5,29 +5,45 @@ import { KeyboardAvoidingView, Platform } from 'react-native';
 
 export interface ContainerProps {
     navigation: any;
+    style?: any;
     title?: string;
     titleElementOverride?: JSX.Element;
     finishComponent?: string;
     onFinish?: () => void;
     disableKeyboardAvoidingView?: boolean;
+    colorScheme?: any;
+    headerOverride?: JSX.Element;
 }
 
 class Container extends React.Component<any> {
+    static defaultProps = {
+        colorScheme: Styles.defaultColorScheme,
+    };
+
     render() {
-        const { style, navigation, title, titleElementOverride, finishComponent, onFinish, disableKeyboardAvoidingView, ...rest } = this.props;
+        const { navigation, style, title, titleElementOverride, finishComponent, onFinish, disableKeyboardAvoidingView, colorScheme, headerOverride, ...rest } = this.props;
         const keyboardAvoidingViewProps = {
             enabled: !disableKeyboardAvoidingView
         };
         return (
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : null}
-                style={[{flex: 1}, style]}
+                style={[{flex: 1, backgroundColor: Styles.colors.white}, style]}
                 {...keyboardAvoidingViewProps}
                 {...rest}
             >
+                {headerOverride ? headerOverride : (
                 <View style={Styles.horizontalLayout}>
-                    <Header title={title} navigation={navigation} finishComponent={finishComponent} onFinish={onFinish} titleElementOverride={titleElementOverride}/>
+                    <Header
+                        title={title}
+                        navigation={navigation}
+                        finishComponent={finishComponent}
+                        onFinish={onFinish}
+                        titleElementOverride={titleElementOverride}
+                        colorScheme={colorScheme}
+                    />
                 </View>
+                )}
                 {this.props.children}
             </KeyboardAvoidingView>
         );

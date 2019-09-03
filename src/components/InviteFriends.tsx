@@ -2,29 +2,33 @@ import * as React from 'react';
 import * as Styles from '../styles/styles';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
-import { getDarkerColor, getLighterColor, getTimeColor, getTimeString } from '../utils/Utils';
+import { addEvents } from '../actions/Actions';
+import { getTimeColor, getTimeString } from '../utils/Utils';
 import { Card, Container, View, Text, Header, Button, ScrollView, TextInput, FriendSelect } from './UI';
 import { EventItemProps } from './EventItem';
+import database, { myId } from '../database/Database';
 
 export interface InviteFriendsProps {
     event: EventItemProps;
 }
 
-const users = {
-    1: {
-        name: 'Bob',
-        avatar: 'https://placeimg.com/140/140/any'
-    },
-    2: {
-        name: 'Dylan',
-        avatar: 'https://placeimg.com/140/140/any'
-    }
-}
+// const users = {
+//     1: {
+//         name: 'Bob',
+//         avatar: 'https://placeimg.com/140/140/any'
+//     },
+//     2: {
+//         name: 'Dylan',
+//         avatar: 'https://placeimg.com/140/140/any'
+//     }
+// }
 
 class InviteFriends extends React.Component<InviteFriendsProps | any> {
     static navigationOptions = {
         header: null,
     }
+    
+    _isMounted = false;
 
     constructor(props) {
         super(props);
@@ -35,8 +39,21 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
         this.handleSelectFriend = this.handleSelectFriend.bind(this);
         this.state = {
             invited: [],
-            searchText: ''
+            searchText: '',
+            friends: {}
         };
+    }
+
+    async componentDidMount() {
+        this._isMounted = true;
+        const friends = await database.getFriends(myId);
+        if (this._isMounted) {
+            this.setState({friends: friends});
+        }
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     isFinished() {
@@ -44,9 +61,19 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
         return this.state['invited'].length > 0;
     }
 
-    handleOnFinish() {
+    async handleOnFinish() {
         if (!this.isFinished()) { return; }
         console.log("Add event");
+        const invited = [myId, ...this.state.invited];
+        const event = {
+            ...this.props.navigation.getParam('event', {}),
+            invited
+        };
+        const eventId = await database.addEvent(event);
+        for (const friendId of invited) {
+            await database.inviteFriend(eventId, friendId);
+        }
+        this.props.addEvents({ eventId: event });
         this.props.navigation.popToTop({immediate: true});
     }
 
@@ -55,55 +82,50 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
     }
 
 
-    handleSelectFriend(friend: any, selected: boolean) {
+    handleSelectFriend(friendId: string, selected: boolean) {
         this.setState((prevState) => {
             let invited = prevState['invited'];
             if(selected) {
                 return {
-                    invited: invited.filter(i => i != friend)
+                    invited: invited.filter(i => i != friendId)
                 }
             } else {
                 return {
                     // invited: { ...prevState['invited'], friend: true }
-                    invited: invited.concat(friend)
+                    invited: invited.concat(friendId)
                 }
             }
         });
     };
 
     getFriendSuggestions() {
-        const suggestions = [1,2];
+        const suggestions = Object.keys(this.state.friends);
 
         return (
-            // <FriendSelect name={"Bob"} avatar={undefined} onPress={() => console.log("added bob")} selected={false} />
-            suggestions.map((uuid: number) => {
+            suggestions.map((friendId: string) => {
                 // TODO: use user id instead
-                const selected = this.state['invited'].indexOf(uuid) !== -1;
-                const friend = users[uuid];
+                const selected = this.state['invited'].indexOf(friendId) !== -1;
+                const friend = this.state.friends[friendId];
+                const name = friend.firstName + ' ' + friend.lastName;
                 return (
                     <FriendSelect
-                        name={friend.name}
+                        name={name}
                         avatar={friend.avatar}
-                        onPress={() => this.handleSelectFriend(uuid, selected)}
+                        onPress={() => this.handleSelectFriend(friendId, selected)}
                         selected={selected}
-                        key={uuid}
+                        key={friendId}
                     />);
             })
         );
     }
 
     render() {
-        const mediumColor = Styles.colors.grey;
-        const lightColor = getLighterColor(mediumColor);
-        const darkColor = getDarkerColor(mediumColor);
-        const finishComponentStyle = [Styles.headerText, this.isFinished() ? {} : {color: Styles.colors.grey}];
+        const finishComponentStyle = [Styles.headerFinishComponent, this.isFinished() ? {} : {color: Styles.defaultColorScheme.mediumColor}]
         return (
             <Container
                 navigation={this.props.navigation}
                 title={"Invite Friends"}
-                finishComponent={
-                    <Text style={finishComponentStyle}>Invite</Text>
-                }
+                finishComponent={ <Text style={finishComponentStyle}>Invite</Text> }
                 onFinish={this.handleOnFinish}
             >
                 <View style={[Styles.horizontalLayout, {padding: 15}]}>
@@ -126,10 +148,13 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
 
 const mapStateToProps = (state) => {
     return {
+    //   events: state.events
     };
 };
-  
+
 const mapDispatchToProps = {
+    addEvents,
+    // setEvents
 };
   
 export default connect(

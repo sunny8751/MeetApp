@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as Styles from '../../styles/styles';
 import moment from 'moment';
 import { Text, Card, View, DatePicker, Button } from './';
-import { getDarkerColor, getLighterColor } from '../../utils/Utils';
 import { Keyboard, Animated } from 'react-native';
 import withOptional from '../WithOptional/WithOptional';
 
@@ -55,8 +54,8 @@ class DatePickerCard extends React.Component<DatePickerCardProps | any> {
         const { title, onDateChange, date, timeText, ...rest } = this.props;
         return (
             <Button onPress={this.handleOnPress} disableAnimate>
-                <Card backgroundColor={getLighterColor(Styles.colors.grey)} style={{marginBottom: 20}}>
-                    <Text style={[Styles.cardSubheaderText, {color: getDarkerColor(Styles.colors.grey), paddingBottom: 5}]}>{title}</Text>
+                <Card backgroundColor={Styles.defaultColorScheme.lightColor} style={{marginBottom: 20}}>
+                    <Text style={[Styles.cardSubheaderText, {color: Styles.defaultColorScheme.darkColor, paddingBottom: 5}]}>{title}</Text>
 
                     {timeText}
 

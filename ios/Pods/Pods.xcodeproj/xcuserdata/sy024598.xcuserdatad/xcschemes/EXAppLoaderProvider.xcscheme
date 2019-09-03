@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "1100"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'A91C747639183865CC99BE2F4EFE0D43'
-               BlueprintName = 'EXAppLoaderProvider'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libEXAppLoaderProvider.a'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "2B8C13513C1F6D610976B0C8F4402EC1"
+               BuildableName = "libEXAppLoaderProvider.a"
+               BlueprintName = "EXAppLoaderProvider"
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
