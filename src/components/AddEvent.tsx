@@ -74,7 +74,7 @@ class AddEvent extends React.Component<AddEventProps | any> {
                     onPress={(value) => this.setState({publicInvite: value === "true"})}
                     buttonColor={Styles.colors.green}
                     backgroundColor={Styles.defaultColorScheme.lightColor}
-                    textColor={styles.inputText.color}
+                    textColor={Styles.inputText.color}
                     textStyle={Styles.switchText}
                     selectedTextStyle={Styles.switchText}
                     animationDuration={100}
@@ -150,7 +150,7 @@ class AddEvent extends React.Component<AddEventProps | any> {
                         handleChangeText={(text) => this.setState({location: text})}
                         textValue={this.state['location']}
                         placeholder={"Type to search a location"}
-                        style={styles.inputText}
+                        style={Styles.inputText}
                         optional={true}
                         optionalText={"Add location"}
                         handleClearPress={() => this.setState({location: ''})}
@@ -172,9 +172,6 @@ class AddEvent extends React.Component<AddEventProps | any> {
 }
 
 const styles = StyleSheet.create({
-    inputText: {
-      color: Styles.colors.black
-    },
     timeText: {
       color: Styles.colors.black,
       paddingBottom: 5

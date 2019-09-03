@@ -6,6 +6,8 @@ export interface WithOptionalProps {
     optional?: boolean;
     optionalText?: string;
     onOptionalPress?: () => void;
+    optionalStyle?: any;
+    optionalTextStyle?: any;
 }
 
 const withOptional = <P extends object>(WrappedComponent: React.ComponentType<P>) => {
@@ -27,15 +29,15 @@ const withOptional = <P extends object>(WrappedComponent: React.ComponentType<P>
         }
 
         render() {
-            const { optional, optionalText, ...rest } = this.props
+            const { optional, optionalText, optionalStyle, optionalTextStyle, ...rest } = this.props
             return (
                 <>
                     {!optional || this.state['showComponent'] ? (
                         <WrappedComponent {...rest as P} />
                     ) : (
                         <Button onPress={this.onOptionalPress}>
-                            <Card backgroundColor={Styles.defaultColorScheme.lightColor} style={{marginBottom: 20}}>
-                                    <Text style={[Styles.cardSubheaderText, {color: Styles.colors.green, textAlign: 'center'}]}>{optionalText}</Text>
+                            <Card backgroundColor={Styles.defaultColorScheme.lightColor} style={[{marginBottom: 20}, optionalStyle]}>
+                                    <Text style={[Styles.cardSubheaderText, {color: Styles.colors.green, textAlign: 'center'}, optionalTextStyle]}>{optionalText}</Text>
                             </Card>
                         </Button>
                     )}

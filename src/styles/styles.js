@@ -130,6 +130,10 @@ export const switchText = {
     fontWeight: 'bold',
 }
 
+export const inputText = {
+    color: colors.black
+}
+
 export const extraBottomSpace = {
     paddingBottom: 100
 }

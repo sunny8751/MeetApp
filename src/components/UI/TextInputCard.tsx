@@ -9,16 +9,22 @@ export interface TextInputCardProps {
     handleChangeText: (text) => void;
     textValue: string;
     placeholder: string;
+    placeholderTextColor?: string;
     multiline?: boolean;
     handleClearPress?: () => void;
+    colorScheme?: any;
 }
 
 class TextInputCard extends React.Component<TextInputCardProps | any> {
+    static defaultProps = {
+        colorScheme: Styles.defaultColorScheme
+    }
+
     render() {
-        const { title, handleChangeText, textValue, placeholder, multiline, handleClearPress } = this.props;
+        const { title, handleChangeText, textValue, placeholder, placeholderTextColor, multiline, handleClearPress, style, colorScheme } = this.props;
         return (
-            <Card backgroundColor={Styles.defaultColorScheme.lightColor} style={{marginBottom: 20}}>
-                <Text style={[Styles.cardSubheaderText, {color: Styles.defaultColorScheme.darkColor, paddingBottom: 5}]}>{title}</Text>
+            <Card backgroundColor={colorScheme.lightColor} style={[{marginBottom: 20}, style]}>
+                <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, paddingBottom: 5}]}>{title}</Text>
                 <View style={[Styles.horizontalLayout, {flex: 1}]}>
                     <TextInput
                         onChangeText={handleChangeText}
@@ -26,7 +32,7 @@ class TextInputCard extends React.Component<TextInputCardProps | any> {
                         scrollEnabled={false}
                         value={textValue}
                         placeholder={placeholder}
-                        placeholderTextColor={Styles.colors.grey}
+                        placeholderTextColor={placeholderTextColor ? placeholderTextColor : Styles.colors.grey}
                         style={[{flex:1}, Styles.text]}
                     />
                     {handleClearPress && textValue ? (

@@ -27,19 +27,12 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
     constructor(props) {
         super(props);
         this.openInfo = this.openInfo.bind(this);
-        this.deleteEvent = this.deleteEvent.bind(this);
     }
 
     async openInfo() {
         const { eventId, colorScheme } = this.props.navigation.state.params;
         console.log('open info', eventId);
         this.props.navigation.navigate('InfoModal', { eventId, colorScheme })
-    }
-
-    async deleteEvent(eventId: string) {
-        database.removeEvent(eventId); // don't await
-        this.props.navigation.goBack();
-        this.props.removeEvents([eventId]);
     }
 
     render() {
