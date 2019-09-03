@@ -10,6 +10,14 @@ export const text = {
     fontSize: 20
 };
 
+export const verticalCenter = {
+    justifyContent: 'center',
+}
+
+export const horizontalCenter = {
+    alignItems: 'center',
+}
+
 export const horizontalLayout = {
     flexDirection: 'row'
 }
@@ -59,6 +67,14 @@ export const cardSubheaderText = {
     fontSize: 16
     // color: colors.white,
 };
+
+export const logoText = {
+    // color: colors.green,
+    fontWeight: 'bold',
+    fontSize: 35,
+    marginTop: -10,
+    paddingBottom: 50,
+}
 
 export const cardHeaderText = {
     ...cardSubheaderText,

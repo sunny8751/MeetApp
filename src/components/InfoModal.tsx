@@ -8,6 +8,7 @@ import { removeEvents } from '../actions/Actions';
 import { getTimeColor, getTimeString } from '../utils/Utils';
 import { TextInputCard, Card, Container, View, Text, Header, Button, ScrollView, Chat } from './UI';
 import database, { myId } from '../database/Database';
+import { TouchableWithoutFeedback } from 'react-native';
 
 export interface InfoModalProps {
 
@@ -25,7 +26,7 @@ class InfoModal extends React.Component<InfoModalProps | any> {
 
         const { eventId } = this.props.navigation.state.params;
         this.state = {
-            location: 'someloacation',
+            location: '',
             endDate: moment(this.props.events[eventId].startDate).add(1, 'hour').toDate(),
         }
     }
@@ -51,48 +52,51 @@ class InfoModal extends React.Component<InfoModalProps | any> {
         const headerButtonStyle = [Styles.headerButton, { backgroundColor: colorScheme.mediumColor }];
         return (
             <View style={{ flex: 1 ,flexDirection: 'column', justifyContent: 'flex-end', backgroundColor: 'transparent'}}>
-                <View style={{ height: "50%" ,width: '100%', justifyContent:"flex-end"}}>
-                    <Container
-                        style={{width: "100%", height: "50%", backgroundColor: colorScheme.lightColor, borderRadius: 15}}
-                        headerOverride = {
-                            <View style={[Styles.leftRightView, {paddingLeft: 15, paddingRight: 15, paddingBottom: 15}]}>
-                                <Text style={[Styles.headerTitle, {color: colorScheme.darkColor}]}>{name}</Text>
-                                <Button onPress={this.closeModal} style={{justifyContent: 'center', paddingTop: 15}}>
-                                    <View style={headerButtonStyle}>
-                                        <Ionicons name="ios-close" size={45} color={colorScheme.darkColor} style={{ paddingLeft: 10, paddingRight: 10,  marginBottom: -7, marginTop: -5 }}/>
-                                    </View>
-                                </Button>
-                            </View>
-                        }
-                        disableKeyboardAvoidingView={true}
-                        colorScheme={colorScheme}
-                    >
-                        <Button onPress={this.deleteEvent}>
-                            <Card backgroundColor={colorScheme.mediumColor} style={{marginBottom: 20}}>
-                                <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Delete Event</Text>
-                            </Card>
-                        </Button>
+                <TouchableWithoutFeedback onPress={this.closeModal}>
+                    <View style={{flex: 1}}/>
+                </TouchableWithoutFeedback>
 
-                        {location ? <View /> : (
-                            <TextInputCard
-                                title={"Location"}
-                                handleChangeText={(text) => this.setState({location: text})}
-                                textValue={this.state['location']}
-                                placeholder={"Type to search a location"}
-                                placeholderTextColor={Styles.colors.black}
-                                style={[Styles.inputText, {backgroundColor: colorScheme.mediumColor, height: 80}]} // TODO fix height issue
-                                colorScheme={colorScheme}
-                                optional={true}
-                                optionalText={"Add location"}
-                                handleClearPress={() => this.setState({location: ''})}
-                                optionalStyle={{backgroundColor: colorScheme.mediumColor}}
-                                optionalTextStyle={{color: colorScheme.darkColor}}
-                            />
-                        )}
-                    </Container>
-                </View>
+                <Container
+                    style={{flex: 1, backgroundColor: colorScheme.lightColor, borderRadius: 15}}
+                    headerOverride = {
+                        <View style={[Styles.leftRightView, {paddingLeft: 15, paddingRight: 15, paddingBottom: 15}]}>
+                            <Text style={[Styles.headerTitle, {color: colorScheme.darkColor}]}>{name}</Text>
+                            <Button onPress={this.closeModal} style={{justifyContent: 'center', paddingTop: 15}}>
+                                <View style={headerButtonStyle}>
+                                    <Ionicons name="ios-close" size={45} color={colorScheme.darkColor} style={{ paddingLeft: 10, paddingRight: 10,  marginBottom: -7, marginTop: -5 }}/>
+                                </View>
+                            </Button>
+                        </View>
+                    }
+                    disableKeyboardAvoidingView={true}
+                    colorScheme={colorScheme}
+                >
+
+                    {location ? <View /> : (
+                        <TextInputCard
+                            title={"Location"}
+                            handleChangeText={(text) => this.setState({location: text})}
+                            textValue={this.state['location']}
+                            placeholder={"Type to search a location"}
+                            placeholderTextColor={Styles.colors.transparentBlack}
+                            style={[Styles.inputText, {backgroundColor: colorScheme.mediumColor}]} // TODO fix height issue
+                            colorScheme={colorScheme}
+                            optional={true}
+                            optionalText={"Add location"}
+                            handleClearPress={() => this.setState({location: ''})}
+                            optionalStyle={{backgroundColor: colorScheme.mediumColor}}
+                            optionalTextStyle={{color: colorScheme.darkColor}}
+                        />
+                    )}
+
+                    <Button onPress={this.deleteEvent}>
+                        <Card backgroundColor={colorScheme.mediumColor} style={{marginBottom: 20}}>
+                            <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Delete Event</Text>
+                        </Card>
+                    </Button>
+
+                </Container>
             </View>
-            
             
         );
     }

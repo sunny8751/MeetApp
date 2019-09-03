@@ -9,6 +9,8 @@ import EventOverview from './src/components/EventOverview';
 import AddEvent from './src/components/AddEvent';
 import InviteFriends from './src/components/InviteFriends';
 import InfoModal from './src/components/InfoModal';
+import Login from './src/components/Login';
+import CreateAccount from './src/components/CreateAccount';
 
 export interface MyStore {
     count: number;
@@ -38,13 +40,15 @@ const fade = (props) => {
 
 const MainStack = createStackNavigator(
     {
+        Login: Login,
+        CreateAccount: CreateAccount,
         MyEvents: MyEvents,
         EventOverview: EventOverview,
         AddEvent: AddEvent,
         InviteFriends: InviteFriends
     }, 
     {
-        // initialRouteName: 'InviteFriends',
+        // initialRouteName: 'Login',
         transitionConfig: () => ({
             screenInterpolator: (props) => {
                 return fade(props);

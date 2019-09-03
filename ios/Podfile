@@ -8,6 +8,8 @@ target 'MeetApp' do
   # Required by RNFirebase
   pod 'Firebase/Core', '~> 6.3.0'
   pod 'Firebase/Firestore'
+  pod 'Firebase/Messaging', '~> 6.3.0'
+  pod 'Firebase/Auth', '~> 6.3.0'
   
   pod 'React', :path => '../node_modules/react-native', :subspecs => [
     'Core',

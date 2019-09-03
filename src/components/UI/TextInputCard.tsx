@@ -5,12 +5,14 @@ import withOptional from '../WithOptional/WithOptional';
 import { Ionicons } from '@expo/vector-icons';
 
 export interface TextInputCardProps {
-    title: string;
+    title?: string;
+    icon?: JSX.Element;
     handleChangeText: (text) => void;
     textValue: string;
     placeholder: string;
     placeholderTextColor?: string;
     multiline?: boolean;
+    password?: boolean;
     handleClearPress?: () => void;
     colorScheme?: any;
 }
@@ -21,17 +23,19 @@ class TextInputCard extends React.Component<TextInputCardProps | any> {
     }
 
     render() {
-        const { title, handleChangeText, textValue, placeholder, placeholderTextColor, multiline, handleClearPress, style, colorScheme } = this.props;
+        const { title, icon, handleChangeText, textValue, placeholder, placeholderTextColor, multiline, password, handleClearPress, style, colorScheme } = this.props;
         return (
             <Card backgroundColor={colorScheme.lightColor} style={[{marginBottom: 20}, style]}>
-                <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, paddingBottom: 5}]}>{title}</Text>
-                <View style={[Styles.horizontalLayout, {flex: 1}]}>
+                {title ? <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, paddingBottom: 5}]}>{title}</Text> : <View />}
+                <View style={Styles.horizontalLayout}>
+                    {icon ? icon : <View />}
                     <TextInput
                         onChangeText={handleChangeText}
                         multiline={multiline}
                         scrollEnabled={false}
                         value={textValue}
                         placeholder={placeholder}
+                        secureTextEntry={password}
                         placeholderTextColor={placeholderTextColor ? placeholderTextColor : Styles.colors.grey}
                         style={[{flex:1}, Styles.text]}
                     />

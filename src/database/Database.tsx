@@ -16,6 +16,26 @@ class FirebaseService {
         this.usersRef = firebase.firestore().collection('users');
     }
 
+    async loginWithEmail(email, password) {
+        return await firebase.auth().signInWithEmailAndPassword(email, password);
+    }
+
+    async loginWithPhone(phoneNumber) {
+        try {
+            return await firebase.auth().signInWithPhoneNumber(phoneNumber);
+        } catch(err) {
+            alert(err); // TypeError: failed to fetch
+        }
+    }
+
+    async createAccount(email, password) {
+        try {
+            return await firebase.auth().createUserWithEmailAndPassword(email, password);
+        } catch(err) {
+            alert(err); // TypeError: failed to fetch
+        }
+    }
+
     async getEvent(eventId, field=undefined) {
         const docSnapshot = await this.eventsRef.doc(eventId).get();
         if (field === undefined) {

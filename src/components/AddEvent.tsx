@@ -103,7 +103,7 @@ class AddEvent extends React.Component<AddEventProps | any> {
                         handleChangeText={(text) => this.setState({name: text})}
                         textValue={this.state['name']}
                         placeholder={"Lunch"}
-                        style={styles.inputText}
+                        style={Styles.inputText}
                         handleClearPress={() => this.setState({name: ''})}
                     />
 
