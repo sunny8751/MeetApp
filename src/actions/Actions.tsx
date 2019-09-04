@@ -1,11 +1,11 @@
 import * as Constants from '../constants/Constants';
 
-export const increment = () => {
-    return { type: Constants.INCREMENT }
+export const setMyId = (myId: string) => {
+    return { type: Constants.SET_MY_ID, myId }
 };
 
-export const decrement = () => {
-    return { type: Constants.DECREMENT }
+export const setAvatar = (avatar: string) => {
+    return { type: Constants.SET_AVATAR, avatar }
 };
 
 export const addEvents = (events: any) => {
@@ -18,5 +18,25 @@ export const removeEvents = (eventIds: string[]) => {
 
 export const setEvents = (events: any) => {
     return { type: Constants.SET_EVENTS, events }
+};
+
+export const addFriends = (friends: any) => {
+    return { type: Constants.ADD_FRIENDS, friends }
+};
+
+export const removeFriends = (friendIds: string[]) => {
+    return { type: Constants.REMOVE_FRIENDS, friendIds }
+};
+
+export const setFriends = (friends: any) => {
+    return { type: Constants.SET_FRIENDS, friends }
+};
+
+export const setFirstName = (firstName: any) => {
+    return { type: Constants.SET_FIRST_NAME, firstName }
+};
+
+export const setLastName = (lastName: any) => {
+    return { type: Constants.SET_LAST_NAME, lastName }
 };
 

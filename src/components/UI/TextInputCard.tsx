@@ -15,6 +15,7 @@ export interface TextInputCardProps {
     password?: boolean;
     handleClearPress?: () => void;
     colorScheme?: any;
+    autoCapitalize?: string;
 }
 
 class TextInputCard extends React.Component<TextInputCardProps | any> {
@@ -23,7 +24,7 @@ class TextInputCard extends React.Component<TextInputCardProps | any> {
     }
 
     render() {
-        const { title, icon, handleChangeText, textValue, placeholder, placeholderTextColor, multiline, password, handleClearPress, style, colorScheme } = this.props;
+        const { title, icon, handleChangeText, textValue, placeholder, placeholderTextColor, multiline, password, handleClearPress, style, colorScheme, autoCapitalize } = this.props;
         return (
             <Card backgroundColor={colorScheme.lightColor} style={[{marginBottom: 20}, style]}>
                 {title ? <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, paddingBottom: 5}]}>{title}</Text> : <View />}
@@ -38,6 +39,7 @@ class TextInputCard extends React.Component<TextInputCardProps | any> {
                         secureTextEntry={password}
                         placeholderTextColor={placeholderTextColor ? placeholderTextColor : Styles.colors.grey}
                         style={[{flex:1}, Styles.text]}
+                        autoCapitalize={autoCapitalize}
                     />
                     {handleClearPress && textValue ? (
                         <Ionicons

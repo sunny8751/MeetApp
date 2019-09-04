@@ -10,6 +10,7 @@ target 'MeetApp' do
   pod 'Firebase/Firestore'
   pod 'Firebase/Messaging', '~> 6.3.0'
   pod 'Firebase/Auth', '~> 6.3.0'
+  pod 'Firebase/Storage', '~> 6.3.0'
   
   pod 'React', :path => '../node_modules/react-native', :subspecs => [
     'Core',
@@ -43,6 +44,8 @@ target 'MeetApp' do
   # pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
 
   # pod 'RNFBFirestore', :path => '../node_modules/@react-native-firebase/firestore'
+
+  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
   target 'MeetAppTests' do
     inherit! :search_paths

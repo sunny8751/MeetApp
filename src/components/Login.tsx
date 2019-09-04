@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as Styles from '../styles/styles';
 import { connect } from 'react-redux';
-import { withNavigation } from 'react-navigation';
+import { withNavigation, StackActions, NavigationActions } from 'react-navigation';
 import { AntDesign, Entypo } from '@expo/vector-icons';
-import { removeEvents } from '../actions/Actions';
+import { setFriends, setEvents, setMyId, setFirstName, setLastName, setAvatar } from '../actions/Actions';
 import { getTimeColor, getTimeString } from '../utils/Utils';
 import { TextInputCard, Card, Container, View, Text, Header, Button, ScrollView, Chat } from './UI';
-import database, { myId } from '../database/Database';
+import database from '../database/Database';
 
 export interface LoginProps {
 
@@ -37,11 +37,24 @@ class Login extends React.Component<LoginProps | any> {
         this.login(username, password);
     }
 
-    async login(username=this.state.username, password=this.state.password) {
+    async login(username, password) {
         console.log('login');
+        const { setMyId, setFirstName, setLastName, setAvatar, setFriends, setEvents } = this.props;
         try {
             const userId = await database.loginWithEmail(username, password);
-            this.props.navigation.navigate('MyEvents', { userId });
+            const { firstName, lastName, avatar, friendIds, events } = await database.getUser(userId);
+            setMyId(userId);
+            setFirstName(firstName);
+            setLastName(lastName);
+            setAvatar(avatar);
+            setFriends(await database.getFriends(userId));
+            setEvents(await database.getEvents(userId));
+
+            const resetAction = StackActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'Main', action: NavigationActions.navigate({ routeName: 'MyEvents' }) })],
+            });
+            this.props.navigation.dispatch(resetAction);
         } catch(err) {
             alert(err);
         }
@@ -50,7 +63,7 @@ class Login extends React.Component<LoginProps | any> {
     createAccount() {
         console.log('createAccount');
         const { username } = this.state;
-        this.props.navigation.navigate('CreateAccount', {username: username})
+        this.props.navigation.navigate('CreateAccount', {username})
     }
 
     forgotPassword() {
@@ -75,6 +88,7 @@ class Login extends React.Component<LoginProps | any> {
                     style={Styles.inputText}
                     handleClearPress={() => this.setState({username: ''})}
                     colorScheme={colorScheme}
+                    autoCapitalize={"none"}
                 />
                 <TextInputCard
                     icon={<View style={iconViewStyle}><AntDesign name={"lock"} size={20} style={{color: colorScheme.darkColor}}/></View>}
@@ -86,8 +100,9 @@ class Login extends React.Component<LoginProps | any> {
                     style={Styles.inputText}
                     handleClearPress={() => this.setState({password: ''})}
                     colorScheme={colorScheme}
+                    autoCapitalize={"none"}
                 />
-                <Button onPress={this.login}>
+                <Button onPress={()=>this.login(this.state.username, this.state.password)}>
                     <Card backgroundColor={colorScheme.lightColor} style={{marginBottom: 20}}>
                         <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Login</Text>
                     </Card>
@@ -111,12 +126,16 @@ class Login extends React.Component<LoginProps | any> {
 
 const mapStateToProps = (state) => {
     return {
-      events: state.events
     };
 };
   
 const mapDispatchToProps = {
-    removeEvents
+    setMyId,
+    setFirstName,
+    setLastName,
+    setAvatar,
+    setFriends,
+    setEvents
 };
   
 export default connect(

@@ -9,8 +9,10 @@ import EventOverview from './src/components/EventOverview';
 import AddEvent from './src/components/AddEvent';
 import InviteFriends from './src/components/InviteFriends';
 import InfoModal from './src/components/InfoModal';
+import ProfileModal from './src/components/Profile';
 import Login from './src/components/Login';
 import CreateAccount from './src/components/CreateAccount';
+import EditProfile from './src/components/EditProfile';
 
 export interface MyStore {
     count: number;
@@ -43,10 +45,11 @@ const MainStack = createStackNavigator(
         Login: Login,
         CreateAccount: CreateAccount,
         MyEvents: MyEvents,
+        EditProfile: EditProfile,
         EventOverview: EventOverview,
         AddEvent: AddEvent,
         InviteFriends: InviteFriends
-    }, 
+    },
     {
         // initialRouteName: 'Login',
         transitionConfig: () => ({

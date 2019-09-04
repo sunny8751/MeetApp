@@ -3,8 +3,9 @@
 // import firestore, { firebase } from '@react-native-firebase/firestore';
 // import * as Schemas from './Schemas';
 import firebase from 'react-native-firebase'
+import moment from 'moment';
 
-export const myId = '9TqXXYoMasO9PnYsQwcM';
+// export const myId = '9TqXXYoMasO9PnYsQwcM';
 // export const getUserInfo = async (uuid: string) => {
 //     const documentSnapshot = await firebase.firestore().collection('users').doc(uuid).get();
 //     return documentSnapshot.data();
@@ -17,23 +18,19 @@ class FirebaseService {
     }
 
     async loginWithEmail(email, password) {
-        return await firebase.auth().signInWithEmailAndPassword(email, password);
+        await firebase.auth().signInWithEmailAndPassword(email, password);
+        return email;
     }
 
     async loginWithPhone(phoneNumber) {
-        try {
-            return await firebase.auth().signInWithPhoneNumber(phoneNumber);
-        } catch(err) {
-            alert(err); // TypeError: failed to fetch
-        }
+        await firebase.auth().signInWithPhoneNumber(phoneNumber);
+        return phoneNumber;
     }
 
     async createAccount(email, password) {
-        try {
-            return await firebase.auth().createUserWithEmailAndPassword(email, password);
-        } catch(err) {
-            alert(err); // TypeError: failed to fetch
-        }
+        console.log('create account with', email, password);
+        await firebase.auth().createUserWithEmailAndPassword(email, password);
+        return email;
     }
 
     async getEvent(eventId, field=undefined) {
@@ -82,19 +79,31 @@ class FirebaseService {
         }
     }
 
-    async addUser(user) {
-        const doc = await this.usersRef.doc();
+    async addUser(userId, user) {
+        const doc = await this.usersRef.doc(userId);
         doc.set(user);
-        return doc.id;
+        // return doc.id;
     }
 
     async getFriends(userId) {
         const friendIds = await this.getUser(userId, 'friends');
-        let friendsMap = {};
+        let friends = {};
         for (const id of friendIds) {
-            friendsMap[id] = await this.getUser(id);
+            friends[id] = await this.getUser(id);
         }
-        return friendsMap;
+        return friends;
+    }
+
+    async getEvents(userId) {
+        const eventIds = await database.getUser(userId, 'events');
+        let events = {};
+        for (const id of eventIds) {
+            const event = await database.getEvent(id);
+            if ((event.endDate ? event.endDate : moment(event.startDate).add(1, 'hour').toDate()) >= new Date()) {
+                events[id] = event;
+            }
+        }
+        return events;
     }
 
     async inviteFriend(eventId, userId) {
@@ -107,6 +116,51 @@ class FirebaseService {
         await this.usersRef.doc(userId).update({
             events: firebase.firestore.FieldValue.arrayRemove(eventId)
         });
+    }
+
+    async updateUser(userId, user) {
+        await this.usersRef.doc(userId).update(user);
+    }
+
+    async uploadProfilePicture(source, userId) {
+        const ext = source.split('.').pop(); // Extract image extension
+        const filename = `${userId}.${ext}`; // Generate unique name
+        // this.setState({ uploading: true });
+        const uploadResult = await firebase.storage().ref(`avatars/${filename}`).putFile(source);
+        // .on(
+            //     firebase.storage.TaskEvent.STATE_CHANGED,
+            //     snapshot => {
+            //         let state = {
+            //             progress: (snapshot.bytesTransferred / snapshot.totalBytes) * 100 // Calculate progress percentage
+            //         };
+            //         if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
+            //             const allImages = this.state.images;
+            //             allImages.push(snapshot.downloadURL);
+            //             state = {
+            //                 ...state,
+            //                 uploading: false,
+            //                 imgSource: '',
+            //                 imageUri: '',
+            //                 progress: 0,
+            //                 images: allImages
+            //             };
+            //             AsyncStorage.setItem('images', JSON.stringify(allImages));
+            //         }
+            //         this.setState(state);
+            //     },
+            //     error => {
+            //         unsubscribe();
+            //         alert('Sorry, Try again.');
+            //     }
+            // );
+        return uploadResult.downloadURL;
+        // await this.usersRef.doc(userId).update({
+        //     avatar: uploadResult.downloadURL
+        // });
+    }
+
+    async updatePassword(newPassword) {
+        await firebase.auth().currentUser.updatePassword(newPassword);
     }
 }
 

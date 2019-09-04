@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { removeEvents } from '../actions/Actions';
 import { getTimeColor, getTimeString } from '../utils/Utils';
 import { Card, Container, View, Text, Header, Button, ScrollView, Chat } from './UI';
-import database, { myId } from '../database/Database';
+import database from '../database/Database';
 
 export interface EventOverviewProps {
 
@@ -26,10 +26,10 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
 
     constructor(props) {
         super(props);
-        this.openInfo = this.openInfo.bind(this);
+        this.openInfoModal = this.openInfoModal.bind(this);
     }
 
-    async openInfo() {
+    async openInfoModal() {
         const { eventId, colorScheme } = this.props.navigation.state.params;
         console.log('open info', eventId);
         this.props.navigation.navigate('InfoModal', { eventId, colorScheme })
@@ -55,7 +55,7 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
                 finishComponent={
                     <Ionicons name="ios-information" size={45} color={colorScheme.darkColor} style={{ paddingLeft: 17, paddingRight: 17,  marginBottom: -5, marginTop: -5 }}/>
                 }
-                onFinish={this.openInfo}
+                onFinish={this.openInfoModal}
                 colorScheme={colorScheme}
             >
                 {/* <ScrollView contentContainerStyle={Styles.extraBottomSpace}>

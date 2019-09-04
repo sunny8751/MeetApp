@@ -6,7 +6,7 @@ import { addEvents } from '../actions/Actions';
 import { getTimeColor, getTimeString } from '../utils/Utils';
 import { Card, Container, View, Text, Header, Button, ScrollView, TextInput, FriendSelect } from './UI';
 import { EventItemProps } from './EventItem';
-import database, { myId } from '../database/Database';
+import database from '../database/Database';
 
 export interface InviteFriendsProps {
     event: EventItemProps;
@@ -28,8 +28,6 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
         header: null,
     }
     
-    _isMounted = false;
-
     constructor(props) {
         super(props);
         this.isFinished = this.isFinished.bind(this);
@@ -40,20 +38,7 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
         this.state = {
             invited: [],
             searchText: '',
-            friends: {}
         };
-    }
-
-    async componentDidMount() {
-        this._isMounted = true;
-        const friends = await database.getFriends(myId);
-        if (this._isMounted) {
-            this.setState({friends: friends});
-        }
-    }
-
-    componentWillUnmount() {
-        this._isMounted = false;
     }
 
     isFinished() {
@@ -64,7 +49,7 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
     async handleOnFinish() {
         if (!this.isFinished()) { return; }
         console.log("Add event");
-        const invited = [myId, ...this.state.invited];
+        const invited = [this.props.myId, ...this.state.invited];
         const event = {
             ...this.props.navigation.getParam('event', {}),
             invited
@@ -99,13 +84,13 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
     };
 
     getFriendSuggestions() {
-        const suggestions = Object.keys(this.state.friends);
+        const suggestions = Object.keys(this.props.friends);
 
         return (
             suggestions.map((friendId: string) => {
                 // TODO: use user id instead
                 const selected = this.state['invited'].indexOf(friendId) !== -1;
-                const friend = this.state.friends[friendId];
+                const friend = this.props.friends[friendId];
                 const name = friend.firstName + ' ' + friend.lastName;
                 return (
                     <FriendSelect
@@ -148,7 +133,8 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
 
 const mapStateToProps = (state) => {
     return {
-    //   events: state.events
+        myId: state.myId,
+        friends: state.friends,
     };
 };
 

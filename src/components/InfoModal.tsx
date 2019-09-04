@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as Styles from '../styles/styles';
 import { connect } from 'react-redux';
-import { withNavigation } from 'react-navigation';
+import { withNavigation, StackActions, NavigationActions } from 'react-navigation';
 import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
 import { removeEvents } from '../actions/Actions';
 import { getTimeColor, getTimeString } from '../utils/Utils';
-import { TextInputCard, Card, Container, View, Text, Header, Button, ScrollView, Chat } from './UI';
-import database, { myId } from '../database/Database';
+import { TextInputCard, Card, Modal, View, Text, Header, Button, ScrollView, Chat } from './UI';
+import database from '../database/Database';
 import { TouchableWithoutFeedback } from 'react-native';
 
 export interface InfoModalProps {
@@ -39,8 +39,14 @@ class InfoModal extends React.Component<InfoModalProps | any> {
         const { eventId } = this.props.navigation.state.params;
         console.log('delete', eventId);
         database.removeEvent(eventId); // don't await
-        this.props.navigation.popToTop({immediate: true});
+        // this.props.navigation.popToTop({immediate: true});
         this.props.removeEvents([eventId]);
+
+        const resetAction = StackActions.reset({
+            index: 0,
+            actions: [NavigationActions.navigate({ routeName: 'Main', action: NavigationActions.navigate({ routeName: 'MyEvents' }) })],
+        });
+        this.props.navigation.dispatch(resetAction);
     }
 
     render() {
@@ -49,55 +55,36 @@ class InfoModal extends React.Component<InfoModalProps | any> {
             return (<View />)
         }
         const { name, endDate, location, description, invited } = this.props.events[eventId];
-        const headerButtonStyle = [Styles.headerButton, { backgroundColor: colorScheme.mediumColor }];
         return (
-            <View style={{ flex: 1 ,flexDirection: 'column', justifyContent: 'flex-end', backgroundColor: 'transparent'}}>
-                <TouchableWithoutFeedback onPress={this.closeModal}>
-                    <View style={{flex: 1}}/>
-                </TouchableWithoutFeedback>
+            <Modal
+                title={name}
+                handleClose={this.closeModal}
+                colorScheme={colorScheme}
+            >
+                {location ? <View /> : (
+                    <TextInputCard
+                        title={"Location"}
+                        handleChangeText={(text) => this.setState({location: text})}
+                        textValue={this.state['location']}
+                        placeholder={"Type to search a location"}
+                        placeholderTextColor={Styles.colors.transparentBlack}
+                        style={[Styles.inputText, {backgroundColor: colorScheme.mediumColor}]} // TODO fix height issue
+                        colorScheme={colorScheme}
+                        optional={true}
+                        optionalText={"Add location"}
+                        handleClearPress={() => this.setState({location: ''})}
+                        optionalStyle={{backgroundColor: colorScheme.mediumColor}}
+                        optionalTextStyle={{color: colorScheme.darkColor}}
+                    />
+                )}
 
-                <Container
-                    style={{flex: 1, backgroundColor: colorScheme.lightColor, borderRadius: 15}}
-                    headerOverride = {
-                        <View style={[Styles.leftRightView, {paddingLeft: 15, paddingRight: 15, paddingBottom: 15}]}>
-                            <Text style={[Styles.headerTitle, {color: colorScheme.darkColor}]}>{name}</Text>
-                            <Button onPress={this.closeModal} style={{justifyContent: 'center', paddingTop: 15}}>
-                                <View style={headerButtonStyle}>
-                                    <Ionicons name="ios-close" size={45} color={colorScheme.darkColor} style={{ paddingLeft: 10, paddingRight: 10,  marginBottom: -7, marginTop: -5 }}/>
-                                </View>
-                            </Button>
-                        </View>
-                    }
-                    disableKeyboardAvoidingView={true}
-                    colorScheme={colorScheme}
-                >
+                <Button onPress={this.deleteEvent}>
+                    <Card backgroundColor={colorScheme.mediumColor} style={{marginBottom: 20}}>
+                        <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Delete Event</Text>
+                    </Card>
+                </Button>
 
-                    {location ? <View /> : (
-                        <TextInputCard
-                            title={"Location"}
-                            handleChangeText={(text) => this.setState({location: text})}
-                            textValue={this.state['location']}
-                            placeholder={"Type to search a location"}
-                            placeholderTextColor={Styles.colors.transparentBlack}
-                            style={[Styles.inputText, {backgroundColor: colorScheme.mediumColor}]} // TODO fix height issue
-                            colorScheme={colorScheme}
-                            optional={true}
-                            optionalText={"Add location"}
-                            handleClearPress={() => this.setState({location: ''})}
-                            optionalStyle={{backgroundColor: colorScheme.mediumColor}}
-                            optionalTextStyle={{color: colorScheme.darkColor}}
-                        />
-                    )}
-
-                    <Button onPress={this.deleteEvent}>
-                        <Card backgroundColor={colorScheme.mediumColor} style={{marginBottom: 20}}>
-                            <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Delete Event</Text>
-                        </Card>
-                    </Button>
-
-                </Container>
-            </View>
-            
+            </Modal>
         );
     }
 }

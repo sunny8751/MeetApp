@@ -13,6 +13,7 @@ import DatePickerCard from './DatePickerCard';
 import Chat from './Chat';
 import FriendSelect from './FriendSelect';
 import Avatar from './Avatar';
+import Modal from './Modal';
 import { SectionList } from 'react-native';
 
 export {
@@ -31,5 +32,6 @@ export {
     DatePickerCard,
     Chat,
     FriendSelect,
-    Avatar
+    Avatar,
+    Modal
 };

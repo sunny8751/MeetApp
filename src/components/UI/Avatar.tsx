@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { AntDesign } from '@expo/vector-icons';
 import {Image} from 'react-native';
+import * as Constants from '../../constants/Constants';
 import { TextInputCard, Card, Container, View, Text, Header, Button } from './';
 import * as Styles from '../../styles/styles';
 
@@ -13,6 +14,7 @@ export interface AvatarProps {
 
 class Avatar extends React.Component<AvatarProps | any> {
     static defaultProps = {
+        source: Constants.DEFAULT_AVATAR,
         size: 200,
         backgroundColor: Styles.defaultColorScheme.lightColor
     }
@@ -22,19 +24,19 @@ class Avatar extends React.Component<AvatarProps | any> {
         const style = [Styles.verticalCenter, Styles.horizontalCenter, this.props.style, { width: size, height: size, borderRadius: size / 2, backgroundColor: backgroundColor }]
         return (
             <View style={style}>
-                {source ? (
+                {/* {source ? ( */}
                     <Image
                         source={{uri: source}}
                         style={style}
                     />
-                ) : (
+                {/* ) : (
                     <AntDesign
                         name={"user"}
                         size={size * .8}
                         borderRadius={size / 2}
                         backgroundColor={backgroundColor}
                     />
-                )}
+                )} */}
             </View>
             
         );

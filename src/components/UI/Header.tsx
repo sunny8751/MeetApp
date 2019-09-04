@@ -10,6 +10,7 @@ interface HeaderProps {
     finishComponent?: JSX.Element;
     onFinish?: () => void;
     titleElementOverride?: JSX.Element;
+    backElementOverride?: JSX.Element;
 }
 
 class Header extends React.Component<HeaderProps | any> {
@@ -29,18 +30,20 @@ class Header extends React.Component<HeaderProps | any> {
     }
 
     render() {
-        const { navigation, colorScheme, title, finishComponent, onFinish, titleElementOverride } = this.props;
+        const { navigation, colorScheme, title, finishComponent, onFinish, titleElementOverride, backElementOverride } = this.props;
         const headerButtonStyle = [Styles.headerButton, { backgroundColor: colorScheme.lightColor }];
         return (
             <View style={Styles.headerView}>
                 <View style={Styles.leftRightView}>
-                    {this.shouldRenderBackButton() ? (
-                        <Button onPress={() => navigation.goBack()}>
-                            <View style={headerButtonStyle}>
-                                <Feather name="chevron-left" size={40} style={{color: colorScheme.darkColor}}/>
-                            </View>
-                        </Button>
-                    ) : <View />}
+                    {backElementOverride ? backElementOverride : (
+                        this.shouldRenderBackButton() ? (
+                            <Button onPress={() => navigation.goBack()}>
+                                <View style={headerButtonStyle}>
+                                    <Feather name="chevron-left" size={40} style={{color: colorScheme.darkColor}}/>
+                                </View>
+                            </Button>
+                        ) : <View />
+                    )}
                     {this.props.finishComponent ? (
                         <Button onPress={onFinish} style={{justifyContent: 'center'}}>
                             <View style={headerButtonStyle}>

@@ -2,6 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Give Meet App permission to access your photos to change profile picture</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow Meet App to use the camera</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Give Meet App permission to save photos</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow Meet App to access your microphone</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -39,8 +47,6 @@
 	</dict>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Allow Meet App to access your calendar</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Allow Meet App to use the camera</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Allow Meet App experiences to access your contacts</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -49,14 +55,8 @@
 	<string>Allow Meet App to use your location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow Meet App to use your location</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow Meet App to access your microphone</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Allow Meet App to access your device's accelerometer</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Give Meet App periences permission to save photos</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Give Meet App periences permission to access your photos</string>
+	<string>Allow Meet App to access your device&apos;s accelerometer</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>Allow Meet App to access your reminders</string>
 	<key>UIBackgroundModes</key>

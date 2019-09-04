@@ -3,16 +3,27 @@ import _ from 'lodash';
 import { MyStore } from '../../App';
 import * as Constants from '../constants/Constants';
 
-const counter = (state, action) => {
+const avatarReducer = (state, action) => {
     if (typeof state === 'undefined') {
-        return 0;
+        return Constants.DEFAULT_AVATAR;
     }
 
     switch (action.type) {
-        case Constants.INCREMENT:
-        return state + 1;
-        case Constants.DECREMENT:
-        return state - 1;
+        case Constants.SET_AVATAR:
+        return action.avatar;
+        default:
+        return state;
+    }
+};
+
+const myIdReducer = (state, action) => {
+    if (typeof state === 'undefined') {
+        return '';
+    }
+
+    switch (action.type) {
+        case Constants.SET_MY_ID:
+        return action.myId;
         default:
         return state;
     }
@@ -35,9 +46,56 @@ const eventsReducer = (state, action) => {
     }
 };
 
+const friendsReducer = (state, action) => {
+    if (typeof state === 'undefined') {
+        return {};
+    }
+
+    switch (action.type) {
+        case Constants.ADD_FRIENDS:
+        return {...state, ...action.friends};
+        case Constants.REMOVE_FRIENDS:
+        return _.omit(state, action.friendIds);
+        case Constants.SET_FRIENDS:
+        return {...action.friends};
+        default:
+        return state;
+    }
+};
+
+const firstNameReducer = (state, action) => {
+    if (typeof state === 'undefined') {
+        return '';
+    }
+
+    switch (action.type) {
+        case Constants.SET_FIRST_NAME:
+        return action.firstName;
+        default:
+        return state;
+    }
+};
+
+const lastNameReducer = (state, action) => {
+    if (typeof state === 'undefined') {
+        return '';
+    }
+
+    switch (action.type) {
+        case Constants.SET_LAST_NAME:
+        return action.lastName;
+        default:
+        return state;
+    }
+};
+
 const Reducers = {
-    count: counter,
-    events: eventsReducer
+    avatar: avatarReducer,
+    myId: myIdReducer,
+    events: eventsReducer,
+    friends: friendsReducer,
+    firstName: firstNameReducer,
+    lastName: lastNameReducer
 };
 
 export default combineReducers<MyStore>(Reducers);

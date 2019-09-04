@@ -6,10 +6,10 @@ import _ from 'lodash';
 import moment from 'moment';
 import { addEvents, setEvents } from '../actions/Actions';
 import EventsList from './EventsList';
-import { Header, Button, Container } from './UI';
+import { View, Button, Container, Avatar } from './UI';
 import { AntDesign } from '@expo/vector-icons';
 import {getNextHour } from '../utils/Utils';
-import database, { myId } from '../database/Database';
+import database from '../database/Database';
 
 export interface MyEventsProps {
 
@@ -27,20 +27,28 @@ class MyEvents extends React.Component<MyEventsProps | any> {
         this.createNewEvent = this.createNewEvent.bind(this);
         this.getAddButton = this.getAddButton.bind(this);
         this.refresh = this.refresh.bind(this);
+        this.openProfileModal = this.openProfileModal.bind(this);
 
         this.state = {
-            sections: []
+            sections: this.convertToSections(this.props.events)
         };
         // this.createNewEvent();
+        const { firstName, lastName, myId, avatar } = this.props;
+        console.log(firstName, lastName, myId, avatar);
     }
 
-    async componentDidMount() {
-        // await database.removeEvent('jtYVcg6BGTIwI50gNHMZ');
-        await this.refresh();
-        // if (this._isMounted) {
-        //     this.setState({sections: this.convertToSections(this.props.events)});
-        // }
+    async openProfileModal() {
+        console.log('open profile');
+        this.props.navigation.navigate('EditProfile');
     }
+
+    // async componentDidMount() {
+    //     // await database.removeEvent('jtYVcg6BGTIwI50gNHMZ');
+    //     await this.refresh();
+    //     // if (this._isMounted) {
+    //     //     this.setState({sections: this.convertToSections(this.props.events)});
+    //     // }
+    // }
 
     componentDidUpdate(prevProps) {
       if(this.props.events != prevProps.events)
@@ -50,15 +58,7 @@ class MyEvents extends React.Component<MyEventsProps | any> {
     } 
 
     async refresh() {
-        const eventIds = await database.getUser(myId, 'events');
-        let events = {};
-        for (const id of eventIds) {
-            const event = await database.getEvent(id);
-            if ((event.endDate ? event.endDate : moment(event.startDate).add(1, 'hour').toDate()) >= new Date()) {
-                events[id] = event;
-            }
-        }
-        this.props.setEvents(events);
+        this.props.setEvents(await database.getEvents(this.props.myId));
     }
 
     convertToSections(events) {
@@ -126,6 +126,13 @@ class MyEvents extends React.Component<MyEventsProps | any> {
                     <AntDesign name="plus" size={35} style={{ padding: 2 }}/>
                 }
                 onFinish={this.createNewEvent}
+                backElementOverride={
+                    <Button onPress={this.openProfileModal}  style={{justifyContent: 'center'}}>
+                        <View style={[Styles.headerButton, { backgroundColor: Styles.defaultColorScheme.lightColor }]}>
+                            <Avatar source={this.props.avatar} size={35}/>
+                        </View>
+                    </Button>
+                }
             >
                 <EventsList
                     sections={this.state['sections']}
@@ -140,7 +147,9 @@ class MyEvents extends React.Component<MyEventsProps | any> {
 
 const mapStateToProps = (state) => {
     return {
-      events: state.events
+      events: state.events,
+      myId: state.myId,
+      avatar: state.avatar
     };
 };
 

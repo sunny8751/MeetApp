@@ -8,6 +8,7 @@ export interface ContainerProps {
     style?: any;
     title?: string;
     titleElementOverride?: JSX.Element;
+    backElementOverride?: JSX.Element;
     finishComponent?: string;
     onFinish?: () => void;
     disableKeyboardAvoidingView?: boolean;
@@ -21,7 +22,7 @@ class Container extends React.Component<any> {
     };
 
     render() {
-        const { navigation, style, title, titleElementOverride, finishComponent, onFinish, disableKeyboardAvoidingView, colorScheme, headerOverride, ...rest } = this.props;
+        const { navigation, style, title, titleElementOverride, backElementOverride, finishComponent, onFinish, disableKeyboardAvoidingView, colorScheme, headerOverride, ...rest } = this.props;
         const keyboardAvoidingViewProps = {
             enabled: !disableKeyboardAvoidingView
         };
@@ -40,6 +41,7 @@ class Container extends React.Component<any> {
                         finishComponent={finishComponent}
                         onFinish={onFinish}
                         titleElementOverride={titleElementOverride}
+                        backElementOverride={backElementOverride}
                         colorScheme={colorScheme}
                     />
                 </View>
