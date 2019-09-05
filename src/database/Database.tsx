@@ -27,6 +27,10 @@ class FirebaseService {
         return phoneNumber;
     }
 
+    async logout() {
+        await firebase.auth().signOut();
+    }
+
     async createAccount(email, password) {
         console.log('create account with', email, password);
         await firebase.auth().createUserWithEmailAndPassword(email, password);
@@ -64,7 +68,7 @@ class FirebaseService {
         const doc = this.eventsRef.doc(eventId);
         const invited = (await doc.get()).get('invited');
         for (const userId of invited) {
-            await this.removeFriend(eventId, userId);
+            await this.removeFriendInvite(eventId, userId);
         }
         await doc.delete();
         return doc.id;
@@ -106,13 +110,13 @@ class FirebaseService {
         return events;
     }
 
-    async inviteFriend(eventId, userId) {
+    async addFriendInvite(eventId, userId) {
         await this.usersRef.doc(userId).update({
             events: firebase.firestore.FieldValue.arrayUnion(eventId)
         });
     }
 
-    async removeFriend(eventId, userId) {
+    async removeFriendInvite(eventId, userId) {
         await this.usersRef.doc(userId).update({
             events: firebase.firestore.FieldValue.arrayRemove(eventId)
         });
@@ -120,6 +124,18 @@ class FirebaseService {
 
     async updateUser(userId, user) {
         await this.usersRef.doc(userId).update(user);
+    }
+
+    async addFriend(userId, friendId) {
+        await this.usersRef.doc(userId).update({
+            friends: firebase.firestore.FieldValue.arrayUnion(friendId)
+        });
+    }
+
+    async removeFriend(userId, friendId) {
+        await this.usersRef.doc(userId).update({
+            friends: firebase.firestore.FieldValue.arrayRemove(friendId)
+        });
     }
 
     async uploadProfilePicture(source, userId) {

@@ -14,6 +14,8 @@ export interface ProfileProps {
     finishText: string;
     initialUsername?: string;
     isUsernameLocked?: boolean;
+    finishComponent?: string;
+    onFinish?: () => void;
 }
 
 class Profile extends React.Component<ProfileProps | any> {
@@ -92,93 +94,98 @@ class Profile extends React.Component<ProfileProps | any> {
     }
 
     render() {
-        const { title, finishText, isUsernameLocked } = this.props;
+        const { title, finishText, isUsernameLocked, finishComponent, onFinish, children, ...rest } = this.props;
         const colorScheme = Styles.defaultColorScheme;
-        const iconViewStyle = [Styles.verticalCenter, {paddingRight: 10}];
         return (
             <Container
                 title={title}
                 navigation={this.props.navigation}
+                onFinish={onFinish}
+                finishComponent={finishComponent}
+                {...rest}
             >
-                <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                    <Button
-                        style={[Styles.horizontalCenter, {marginBottom: 20}]}
-                        onPress={this.addAvatar}
-                    >
-                        <Avatar
-                            source={this.state.avatar}
-                            size={80}
+                <ScrollView contentContainerStyle={Styles.extraBottomSpace}>
+                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                        <Button
+                            style={[Styles.horizontalCenter, {marginBottom: 20}]}
+                            onPress={this.addAvatar}
+                        >
+                            <Avatar
+                                source={this.state.avatar}
+                                size={80}
+                            />
+                        </Button>
+                    </View>
+                    
+                    {isUsernameLocked ? (
+                        <Card backgroundColor={colorScheme.lightColor} style={[{marginBottom: 20}]}>
+                            <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, paddingBottom: 5}]}>Email</Text>
+                            <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>{this.state.username}</Text>
+                        </Card>
+                    ) : (
+                        <TextInputCard
+                            title={"Email"}
+                            handleChangeText={(text) => this.setState({username: text})}
+                            textValue={this.state['username']}
+                            placeholder={"johndoe@gmail.com"}
+                            placeholderTextColor={colorScheme.mediumColor}
+                            style={Styles.inputText}
+                            handleClearPress={() => this.setState({username: ''})}
+                            colorScheme={colorScheme}
+                            autoCapitalize={"none"}
                         />
-                    </Button>
-                </View>
-                
-                {isUsernameLocked ? (
-                    <Card backgroundColor={colorScheme.lightColor} style={[{marginBottom: 20}]}>
-                        <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, paddingBottom: 5}]}>Email</Text>
-                        <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>{this.state.username}</Text>
-                    </Card>
-                ) : (
+                    )}
                     <TextInputCard
-                        title={"Email"}
-                        handleChangeText={(text) => this.setState({username: text})}
-                        textValue={this.state['username']}
-                        placeholder={"johndoe@gmail.com"}
+                        title={"First Name"}
+                        handleChangeText={(text) => this.setState({firstName: text})}
+                        textValue={this.state['firstName']}
+                        placeholder={"John"}
                         placeholderTextColor={colorScheme.mediumColor}
                         style={Styles.inputText}
-                        handleClearPress={() => this.setState({username: ''})}
+                        handleClearPress={() => this.setState({firstName: ''})}
+                        colorScheme={colorScheme}
+                    />
+                    <TextInputCard
+                        title={"Last Name"}
+                        handleChangeText={(text) => this.setState({lastName: text})}
+                        textValue={this.state['lastName']}
+                        placeholder={"Doe"}
+                        placeholderTextColor={colorScheme.mediumColor}
+                        style={Styles.inputText}
+                        handleClearPress={() => this.setState({lastName: ''})}
+                        colorScheme={colorScheme}
+                    />
+                    <TextInputCard
+                        title={"Password"}
+                        handleChangeText={(text) => this.setState({password: text})}
+                        textValue={this.state['password']}
+                        placeholder={"Password"}
+                        placeholderTextColor={colorScheme.mediumColor}
+                        password={true}
+                        style={Styles.inputText}
+                        handleClearPress={() => this.setState({password: ''})}
                         colorScheme={colorScheme}
                         autoCapitalize={"none"}
                     />
-                )}
-                <TextInputCard
-                    title={"First Name"}
-                    handleChangeText={(text) => this.setState({firstName: text})}
-                    textValue={this.state['firstName']}
-                    placeholder={"John"}
-                    placeholderTextColor={colorScheme.mediumColor}
-                    style={Styles.inputText}
-                    handleClearPress={() => this.setState({firstName: ''})}
-                    colorScheme={colorScheme}
-                />
-                <TextInputCard
-                    title={"Last Name"}
-                    handleChangeText={(text) => this.setState({lastName: text})}
-                    textValue={this.state['lastName']}
-                    placeholder={"Doe"}
-                    placeholderTextColor={colorScheme.mediumColor}
-                    style={Styles.inputText}
-                    handleClearPress={() => this.setState({lastName: ''})}
-                    colorScheme={colorScheme}
-                />
-                <TextInputCard
-                    title={"Password"}
-                    handleChangeText={(text) => this.setState({password: text})}
-                    textValue={this.state['password']}
-                    placeholder={"Password"}
-                    placeholderTextColor={colorScheme.mediumColor}
-                    password={true}
-                    style={Styles.inputText}
-                    handleClearPress={() => this.setState({password: ''})}
-                    colorScheme={colorScheme}
-                    autoCapitalize={"none"}
-                />
-                <TextInputCard
-                    title={"Confirm Password"}
-                    handleChangeText={(text) => this.setState({passwordConfirmation: text})}
-                    textValue={this.state['passwordConfirmation']}
-                    placeholder={"Password"}
-                    placeholderTextColor={colorScheme.mediumColor}
-                    password={true}
-                    style={Styles.inputText}
-                    handleClearPress={() => this.setState({passwordConfirmation: ''})}
-                    colorScheme={colorScheme}
-                    autoCapitalize={"none"}
-                />
-                <Button onPress={this.saveChanges}>
-                    <Card backgroundColor={colorScheme.lightColor} style={{marginBottom: 20}}>
-                        <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>{finishText}</Text>
-                    </Card>
-                </Button>
+                    <TextInputCard
+                        title={"Confirm Password"}
+                        handleChangeText={(text) => this.setState({passwordConfirmation: text})}
+                        textValue={this.state['passwordConfirmation']}
+                        placeholder={"Password"}
+                        placeholderTextColor={colorScheme.mediumColor}
+                        password={true}
+                        style={Styles.inputText}
+                        handleClearPress={() => this.setState({passwordConfirmation: ''})}
+                        colorScheme={colorScheme}
+                        autoCapitalize={"none"}
+                    />
+                    <Button onPress={this.saveChanges}>
+                        <Card backgroundColor={colorScheme.lightColor} style={{marginBottom: 20}}>
+                            <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>{finishText}</Text>
+                        </Card>
+                    </Button>
+                    { children }
+                </ScrollView>
             </Container>
         );
     }

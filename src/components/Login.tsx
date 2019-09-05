@@ -5,7 +5,7 @@ import { withNavigation, StackActions, NavigationActions } from 'react-navigatio
 import { AntDesign, Entypo } from '@expo/vector-icons';
 import { setFriends, setEvents, setMyId, setFirstName, setLastName, setAvatar } from '../actions/Actions';
 import { getTimeColor, getTimeString } from '../utils/Utils';
-import { TextInputCard, Card, Container, View, Text, Header, Button, ScrollView, Chat } from './UI';
+import { TextInputCard, Card, Container, View, Text, Header, Button, ScrollView } from './UI';
 import database from '../database/Database';
 
 export interface LoginProps {
@@ -27,7 +27,6 @@ class Login extends React.Component<LoginProps | any> {
             username: '',
             password: ''
         };
-        this.login('sunny8751@gmail.com', 'password');
     }
 
     populateLogin(username, password) {
@@ -74,53 +73,59 @@ class Login extends React.Component<LoginProps | any> {
     render() {
         const colorScheme = Styles.defaultColorScheme;
         const iconViewStyle = [Styles.verticalCenter, {paddingRight: 10}];
+        const smallButtonStyle = [{fontSize: 15, color: colorScheme.darkColor, textAlign: 'left', fontWeight: 'bold'}];
         return (
-            <View style={[Styles.verticalCenter, Styles.headerView]}>
-                <View style={Styles.horizontalCenter}>
-                    <Entypo name={"calendar"} size={150} style={{color: Styles.colors.green}} />
-                    <Text style={Styles.logoText}>MeetApp</Text>
-                </View>
-                <TextInputCard
-                    icon={<View style={iconViewStyle}><AntDesign name={"user"} size={20} style={{color: colorScheme.darkColor}}/></View>}
-                    handleChangeText={(text) => this.setState({username: text})}
-                    textValue={this.state['username']}
-                    placeholder={"Email"}
-                    placeholderTextColor={colorScheme.mediumColor}
-                    style={Styles.inputText}
-                    handleClearPress={() => this.setState({username: ''})}
-                    colorScheme={colorScheme}
-                    autoCapitalize={"none"}
-                />
-                <TextInputCard
-                    icon={<View style={iconViewStyle}><AntDesign name={"lock"} size={20} style={{color: colorScheme.darkColor}}/></View>}
-                    handleChangeText={(text) => this.setState({password: text})}
-                    textValue={this.state['password']}
-                    placeholder={"Password"}
-                    placeholderTextColor={colorScheme.mediumColor}
-                    password={true}
-                    style={Styles.inputText}
-                    handleClearPress={() => this.setState({password: ''})}
-                    colorScheme={colorScheme}
-                    autoCapitalize={"none"}
-                />
-                <Button onPress={()=>this.login(this.state.username, this.state.password)}>
-                    <Card backgroundColor={colorScheme.lightColor} style={{marginBottom: 20}}>
-                        <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Login</Text>
-                    </Card>
-                </Button>
-                <View style={Styles.leftRightView}>
-                    <Button onPress={this.createAccount}>
+            <Container
+                navigation={this.props.navigation}
+                style={[Styles.verticalCenter, Styles.headerView, {paddingTop: 100}]}
+            >
+                <ScrollView>
+                    <View style={Styles.horizontalCenter}>
+                        <Entypo name={"calendar"} size={150} style={{color: Styles.colors.green}} />
+                        <Text style={Styles.logoText}>MeetApp</Text>
+                    </View>
+                    <TextInputCard
+                        icon={<View style={iconViewStyle}><AntDesign name={"user"} size={20} style={{color: colorScheme.darkColor}}/></View>}
+                        handleChangeText={(text) => this.setState({username: text})}
+                        textValue={this.state['username']}
+                        placeholder={"Email"}
+                        placeholderTextColor={colorScheme.mediumColor}
+                        style={Styles.inputText}
+                        handleClearPress={() => this.setState({username: ''})}
+                        colorScheme={colorScheme}
+                        autoCapitalize={"none"}
+                    />
+                    <TextInputCard
+                        icon={<View style={iconViewStyle}><AntDesign name={"lock"} size={20} style={{color: colorScheme.darkColor}}/></View>}
+                        handleChangeText={(text) => this.setState({password: text})}
+                        textValue={this.state['password']}
+                        placeholder={"Password"}
+                        placeholderTextColor={colorScheme.mediumColor}
+                        password={true}
+                        style={Styles.inputText}
+                        handleClearPress={() => this.setState({password: ''})}
+                        colorScheme={colorScheme}
+                        autoCapitalize={"none"}
+                    />
+                    <Button onPress={()=>this.login(this.state.username, this.state.password)}>
                         <Card backgroundColor={colorScheme.lightColor} style={{marginBottom: 20}}>
-                            <Text style={{color: colorScheme.darkColor, textAlign: 'left', fontWeight: 'bold'}}>Create Account</Text>
+                            <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Login</Text>
                         </Card>
                     </Button>
-                    <Button onPress={this.forgotPassword}>
-                        <Card backgroundColor={colorScheme.lightColor} style={{marginBottom: 20}}>
-                            <Text style={{color: colorScheme.darkColor, textAlign: 'left', fontWeight: 'bold'}}>Forgot Password?</Text>
-                        </Card>
-                    </Button>
-                </View>
-            </View>
+                    <View style={[Styles.leftRightView, Styles.horizontalCenter]}>
+                        <Button onPress={this.createAccount}>
+                            <Card backgroundColor={colorScheme.lightColor} style={{marginBottom: 20}}>
+                                <Text style={smallButtonStyle}>Create Account</Text>
+                            </Card>
+                        </Button>
+                        <Button onPress={this.forgotPassword}>
+                            <Card backgroundColor={colorScheme.lightColor} style={{marginBottom: 20}}>
+                                <Text style={smallButtonStyle}>Forgot Password?</Text>
+                            </Card>
+                        </Button>
+                    </View>
+                </ScrollView>
+            </Container>
         );
     }
 }

@@ -33,5 +33,5 @@ export {
     Chat,
     FriendSelect,
     Avatar,
-    Modal
+    Modal,
 };

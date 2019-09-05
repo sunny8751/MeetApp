@@ -21,6 +21,12 @@ class Header extends React.Component<HeaderProps | any> {
     constructor(props) {
         super(props);
         this.shouldRenderBackButton = this.shouldRenderBackButton.bind(this);
+        this.handleBackPress = this.handleBackPress.bind(this);
+    }
+
+    handleBackPress() {
+        const { navigation } = this.props;
+        navigation.goBack()
     }
 
     shouldRenderBackButton() {
@@ -37,7 +43,7 @@ class Header extends React.Component<HeaderProps | any> {
                 <View style={Styles.leftRightView}>
                     {backElementOverride ? backElementOverride : (
                         this.shouldRenderBackButton() ? (
-                            <Button onPress={() => navigation.goBack()}>
+                            <Button onPress={this.handleBackPress}>
                                 <View style={headerButtonStyle}>
                                     <Feather name="chevron-left" size={40} style={{color: colorScheme.darkColor}}/>
                                 </View>

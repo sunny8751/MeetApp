@@ -13,6 +13,7 @@ import ProfileModal from './src/components/Profile';
 import Login from './src/components/Login';
 import CreateAccount from './src/components/CreateAccount';
 import EditProfile from './src/components/EditProfile';
+import AddFriends from './src/components/AddFriends';
 
 export interface MyStore {
     count: number;
@@ -44,6 +45,7 @@ const MainStack = createStackNavigator(
     {
         Login: Login,
         CreateAccount: CreateAccount,
+        AddFriends: AddFriends,
         MyEvents: MyEvents,
         EditProfile: EditProfile,
         EventOverview: EventOverview,

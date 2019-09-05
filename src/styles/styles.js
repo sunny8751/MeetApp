@@ -18,6 +18,11 @@ export const horizontalCenter = {
     alignItems: 'center',
 }
 
+export const center = {
+    ...verticalCenter,
+    ...horizontalCenter
+}
+
 export const horizontalLayout = {
     flexDirection: 'row'
 }

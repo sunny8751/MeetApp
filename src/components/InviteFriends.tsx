@@ -57,7 +57,7 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
         };
         const eventId = await database.addEvent(event);
         for (const friendId of invited) {
-            await database.inviteFriend(eventId, friendId);
+            await database.addFriendInvite(eventId, friendId);
         }
         this.props.addEvents({ eventId: event });
         this.props.navigation.popToTop({immediate: true});
@@ -92,11 +92,9 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
                 // TODO: use user id instead
                 const selected = this.state['invited'].indexOf(friendId) !== -1;
                 const friend = this.props.friends[friendId];
-                const name = friend.firstName + ' ' + friend.lastName;
                 return (
                     <FriendSelect
-                        name={name}
-                        avatar={friend.avatar}
+                        user={friend}
                         onPress={() => this.handleSelectFriend(friendId, selected)}
                         selected={selected}
                         key={friendId}

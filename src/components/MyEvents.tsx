@@ -7,7 +7,7 @@ import moment from 'moment';
 import { addEvents, setEvents } from '../actions/Actions';
 import EventsList from './EventsList';
 import { View, Button, Container, Avatar } from './UI';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import {getNextHour } from '../utils/Utils';
 import database from '../database/Database';
 
@@ -28,13 +28,12 @@ class MyEvents extends React.Component<MyEventsProps | any> {
         this.getAddButton = this.getAddButton.bind(this);
         this.refresh = this.refresh.bind(this);
         this.openProfileModal = this.openProfileModal.bind(this);
+        this.addFriends = this.addFriends.bind(this);
 
         this.state = {
             sections: this.convertToSections(this.props.events)
         };
         // this.createNewEvent();
-        const { firstName, lastName, myId, avatar } = this.props;
-        console.log(firstName, lastName, myId, avatar);
     }
 
     async openProfileModal() {
@@ -105,6 +104,10 @@ class MyEvents extends React.Component<MyEventsProps | any> {
         );
     }
 
+    addFriends() {
+        this.props.navigation.navigate('AddFriends');
+    }
+
     // handleOnScroll({nativeEvent}) {
     //     const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
     //         const paddingToBottom = 20;
@@ -123,15 +126,25 @@ class MyEvents extends React.Component<MyEventsProps | any> {
                 title={'My Events'}
                 navigation={this.props.navigation}
                 finishComponent={
-                    <AntDesign name="plus" size={35} style={{ padding: 2 }}/>
+                    <AntDesign name="plus" size={35} style={[Styles.center, { padding: 2 }]}/>
                 }
                 onFinish={this.createNewEvent}
                 backElementOverride={
-                    <Button onPress={this.openProfileModal}  style={{justifyContent: 'center'}}>
-                        <View style={[Styles.headerButton, { backgroundColor: Styles.defaultColorScheme.lightColor }]}>
-                            <Avatar source={this.props.avatar} size={35}/>
-                        </View>
-                    </Button>
+                    <View style={Styles.horizontalLayout}>
+                        <Button onPress={this.openProfileModal}  style={[Styles.center, {paddingRight: 10}]}>
+                            {/* <View style={[Styles.headerButton, { backgroundColor: Styles.defaultColorScheme.lightColor }]}>
+                                <Avatar source={this.props.avatar} size={35}/>
+                            </View> */}
+                            <View style={[Styles.headerButton, Styles.center, { backgroundColor: Styles.defaultColorScheme.lightColor }]}>
+                                <Ionicons name="ios-settings" size={35} style={{ padding: 2, paddingLeft: 7, paddingRight: 7 }}/>
+                            </View>
+                        </Button>
+                        <Button onPress={this.addFriends}  style={Styles.center}>
+                            <View style={[Styles.headerButton, Styles.center, { backgroundColor: Styles.defaultColorScheme.lightColor }]}>
+                                <AntDesign name="adduser" size={33} style={{ padding: 3, paddingLeft: 4, paddingRight: 4 }}/>
+                            </View>
+                        </Button>
+                    </View>
                 }
             >
                 <EventsList
