@@ -29,13 +29,22 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
         this.openInfoModal = this.openInfoModal.bind(this);
     }
 
-    async openInfoModal() {
+    changeTitle() {
+
+    }
+
+    changeDates() {
+
+    }
+
+    openInfoModal() {
         const { eventId, colorScheme } = this.props.navigation.state.params;
         console.log('open info', eventId);
         this.props.navigation.navigate('InfoModal', { eventId, colorScheme })
     }
 
     render() {
+        const { myId, firstName, lastName, avatar } = this.props;
         const { eventId, colorScheme } = this.props.navigation.state.params;
         if (!this.props.events[eventId]) {
             return (<View />)
@@ -61,7 +70,11 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
                 {/* <ScrollView contentContainerStyle={Styles.extraBottomSpace}>
                     <Text>Hi</Text>
                 </ScrollView> */}
-                <Chat />
+                <Chat
+                    userId={myId}
+                    name={firstName + ' ' + lastName}
+                    avatar={avatar}
+                />
             </Container>
             
         );
@@ -70,7 +83,11 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
 
 const mapStateToProps = (state) => {
     return {
-      events: state.events
+      events: state.events,
+      myId: state.myId,
+      firstName: state.firstName,
+      lastName: state.lastName,
+      avatar: state.avatar
     };
 };
   

@@ -42,8 +42,9 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
     }
 
     isFinished() {
+        return true;
         // return Object.keys(this.state['invited']).length > 0;
-        return this.state['invited'].length > 0;
+        // return this.state['invited'].length > 0;
     }
 
     async handleOnFinish() {

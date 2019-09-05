@@ -6,7 +6,13 @@ import emojiUtils from 'emoji-utils';
 
 import ChatMessage from './ChatMessage';
 
-class Chat extends React.Component {
+export interface ChatProps {
+    userId: string,
+    name: string,
+    avatar: string
+}
+
+class Chat extends React.Component<ChatProps | any> {
     state = {
         messages: [],
     }
@@ -52,13 +58,15 @@ class Chat extends React.Component {
     }
 
     render() {
+        const { userId, name, avatar } = this.props;
         return (
             <GiftedChat
                 messages={this.state.messages}
                 onSend={messages => this.onSend(messages)}
                 user={{
-                    _id: 1,
-                    name: "Sunwoo Yim",
+                    _id: userId,
+                    name: name,
+                    avatar: avatar
                 }}
                 renderMessage={this.renderMessage}
                 listViewProps={{
