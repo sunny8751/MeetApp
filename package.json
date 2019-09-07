@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5",
+    "@react-native-community/blur": "^3.3.1",
     "color": "^3.1.2",
     "emoji-utils": "^1.0.1",
     "expo": "^34.0.3",

@@ -46,6 +46,8 @@ target 'MeetApp' do
 
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
+  pod 'react-native-blur', :path => '../node_modules/@react-native-community/blur'
+
   target 'MeetAppTests' do
     inherit! :search_paths
   end

@@ -106,7 +106,7 @@ export const addButton = {
     borderRadius: 50,
     alignSelf: 'center',
     backgroundColor: colors.lightgreen
-}
+};
 
 export const addButtonFloating = {
     ...addButton,
@@ -114,19 +114,19 @@ export const addButtonFloating = {
     position: 'absolute',
     paddingLeft: 60,
     paddingRight: 60,
-}
+};
 
 export const headerView = {
     ...flex,
     padding: 15,
     marginTop: Platform.OS === 'ios' ? 20 : 0,
-}
+};
 
 export const headerText = {
     color: defaultColorScheme.darkColor,
     fontSize: 22,
     fontWeight: 'bold'
-}
+};
 
 export const headerTitle = {
     ...headerText,
@@ -135,34 +135,42 @@ export const headerTitle = {
     fontSize: 26,
     fontWeight: 'bold',
     paddingTop: 15
-}
+};
 
 export const headerFinishComponent = {
     ...headerText,
     padding: 5,
     paddingLeft: 10,
     paddingRight: 10
-}
+};
 
 export const headerButton = {
     backgroundColor: defaultColorScheme.mediumColor,
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center'
-}
+};
 
 export const switchText = {
     ...text,
     fontWeight: 'bold',
-}
+};
 
 export const inputText = {
     color: colors.black
-}
+};
 
 export const extraBottomSpace = {
     paddingBottom: 100
-}
+};
+
+export const fullscreenAbsolute = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0
+};
 
 export {
     colors,
