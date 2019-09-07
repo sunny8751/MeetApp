@@ -4,11 +4,9 @@ import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import { AntDesign } from '@expo/vector-icons';
 import { addFriends, removeFriends } from '../actions/Actions';
-import { getTimeColor, getTimeString } from '../utils/Utils';
 import { Card, Container, View, Text, Header, Button, ScrollView, TextInput, FriendSelect } from './UI';
 import database from '../database/Database';
 import _ from 'lodash';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 export interface AddFriendsProps {
 }
@@ -33,7 +31,8 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
         this.selectFriend = this.selectFriend.bind(this);
         this.state = {
             searchText: '',
-            suggestions: {}
+            suggestions: this.props.friends,
+            refresh: false
         };
     }
 
@@ -88,10 +87,10 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
         }
     }
 
-    addFriend(friendId: string) {
+    addFriend(friendId: string, friend: any) {
         console.log('add', friendId);
         database.addFriend(this.props.myId, friendId);
-        this.props.addFriends([friendId]);
+        this.props.addFriends({[friendId]: friend});
     };
 
     removeFriend(friendId: string) {
@@ -100,14 +99,19 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
         this.props.removeFriends([friendId]);
     };
 
+    componentDidUpdate(prevProps) {
+        if(this.props.friends != prevProps.friends) {
+            this.setState({refresh: !this.state.refresh});
+        }
+    } 
+
     getFriendSuggestions() {
         const { suggestions } = this.state;
         const colorScheme = Styles.defaultColorScheme;
         return (
-            Object.keys(suggestions).map((friendId: string) => {
+            Object.keys(suggestions).sort().map((friendId: string) => {
                 // TODO: use user id instead
                 const selected = this.isFriend(friendId);
-                console.log(selected, this.isFriend(friendId))
                 const friend = suggestions[friendId];
                 return (
                     <FriendSelect
@@ -117,7 +121,7 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
                         key={friendId}
                         onPress={() => this.selectFriend(friendId)}
                         selectedElement={
-                            <Button onPress={() => this.addFriend(friendId)}  style={Styles.center}>
+                            <Button onPress={() => this.removeFriend(friendId)}  style={Styles.center}>
                                 <Card style={[Styles.headerButton, Styles.horizontalLayout, {padding: 10, marginBottom: 0, marginRight: 0, marginLeft: 0, backgroundColor: Styles.colors.red}]}>
                                     <AntDesign name="deleteuser" size={20} style={{ paddingRight: 4 }}/>
                                     <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor}]}>Remove</Text>
@@ -125,7 +129,7 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
                             </Button>
                         }
                         unselectedElement={
-                            <Button onPress={() => this.addFriend(friendId)}  style={Styles.center}>
+                            <Button onPress={() => this.addFriend(friendId, friend)}  style={Styles.center}>
                                 <Card style={[Styles.headerButton, Styles.horizontalLayout, {padding: 10, marginBottom: 0, marginRight: 0, marginLeft: 0, backgroundColor: Styles.colors.green}]}>
                                     <AntDesign name="adduser" size={20} style={{ paddingRight: 4 }}/>
                                     <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor}]}>Add</Text>

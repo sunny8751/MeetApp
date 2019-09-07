@@ -10,6 +10,11 @@ export const text = {
     fontSize: 20
 };
 
+export const timeText = {
+    ...text,
+    paddingBottom: 5
+}
+
 export const verticalCenter = {
     justifyContent: 'center',
 }

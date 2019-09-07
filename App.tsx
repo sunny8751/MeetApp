@@ -6,7 +6,6 @@ import { createStore } from 'redux';
 import Reducers from './src/reducers/Reducers';
 import MyEvents from './src/components/MyEvents';
 import EventOverview from './src/components/EventOverview';
-import AddEvent from './src/components/AddEvent';
 import InviteFriends from './src/components/InviteFriends';
 import InfoModal from './src/components/InfoModal';
 import ProfileModal from './src/components/Profile';
@@ -14,6 +13,7 @@ import Login from './src/components/Login';
 import CreateAccount from './src/components/CreateAccount';
 import EditProfile from './src/components/EditProfile';
 import AddFriends from './src/components/AddFriends';
+import EditEvent from './src/components/EditEvent';
 
 export interface MyStore {
     count: number;
@@ -49,7 +49,7 @@ const MainStack = createStackNavigator(
         MyEvents: MyEvents,
         EditProfile: EditProfile,
         EventOverview: EventOverview,
-        AddEvent: AddEvent,
+        EditEvent: EditEvent,
         InviteFriends: InviteFriends
     },
     {
@@ -72,13 +72,10 @@ const RootStack = createStackNavigator(
       },
     },
     {
-      mode: 'modal',
-      headerMode: 'none',
-      transparentCard: true,
-      cardStyle:{
-        backgroundColor: "transparent",
-        // opacity: Platform.OS === "android" ?  1 :  .5
-      },
+        mode: 'modal',
+        headerMode: 'none',
+        cardStyle: { opacity: 1 },
+        transparentCard: true,
     }
   );
 

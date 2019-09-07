@@ -30,3 +30,17 @@ export const getTimeColor = (date, hoursUntilTimeWarning = 2) => {
     const amount = moment.duration(moment(date).diff(moment())).asHours();
     return amount < hoursUntilTimeWarning ? Styles.colors.red : Styles.colors.green;
 }
+
+export const getFormattedTimeString = (date: Date) => {
+    return moment(date).format("LT, MMM D");
+}
+
+export const getTimeElapsed = (start: Date, end: Date) => {
+    const duration = moment.duration(moment(end).diff(moment(start)));
+    let str = "";
+    if(duration.asDays() >= 1) {str = str + Math.floor(duration.asDays()) + "d ";}
+    if(duration.hours() >= 1) {str = str + Math.floor(duration.hours()) + "h ";}
+    if(duration.minutes() >= 1) {str = str + Math.floor(duration.minutes()) + "m ";}
+    return str;
+}
+

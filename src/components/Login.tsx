@@ -27,6 +27,7 @@ class Login extends React.Component<LoginProps | any> {
             username: '',
             password: ''
         };
+        this.login('sunny8751@gmail.com', 'password');
     }
 
     populateLogin(username, password) {
@@ -56,6 +57,7 @@ class Login extends React.Component<LoginProps | any> {
             });
             this.props.navigation.dispatch(resetAction);
         } catch(err) {
+            console.log(err);
             alert(err);
         }
     }

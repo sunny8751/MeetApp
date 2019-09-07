@@ -20,6 +20,10 @@ export const setEvents = (events: any) => {
     return { type: Constants.SET_EVENTS, events }
 };
 
+export const updateEvent = (eventId: string, event: any) => {
+    return { type: Constants.UPDATE_EVENT, eventId, event }
+};
+
 export const addFriends = (friends: any) => {
     return { type: Constants.ADD_FRIENDS, friends }
 };

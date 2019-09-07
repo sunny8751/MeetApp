@@ -10,9 +10,9 @@ const avatarReducer = (state, action) => {
 
     switch (action.type) {
         case Constants.SET_AVATAR:
-        return action.avatar;
+            return action.avatar;
         default:
-        return state;
+            return state;
     }
 };
 
@@ -23,9 +23,9 @@ const myIdReducer = (state, action) => {
 
     switch (action.type) {
         case Constants.SET_MY_ID:
-        return action.myId;
+            return action.myId;
         default:
-        return state;
+            return state;
     }
 };
 
@@ -36,13 +36,16 @@ const eventsReducer = (state, action) => {
 
     switch (action.type) {
         case Constants.ADD_EVENTS:
-        return {...state, ...action.events};
+            return {...state, ...action.events};
         case Constants.REMOVE_EVENTS:
-        return _.omit(state, action.eventIds);
+            return _.omit(state, action.eventIds);
         case Constants.SET_EVENTS:
-        return {...action.events};
+            return {...action.events};
+        case Constants.UPDATE_EVENT:
+            console.log('reducer', {...state, [action.eventId]: {...state[action.eventId], ...action.event}});
+            return {...state, [action.eventId]: {...state[action.eventId], ...action.event}}
         default:
-        return state;
+            return state;
     }
 };
 
@@ -53,13 +56,13 @@ const friendsReducer = (state, action) => {
 
     switch (action.type) {
         case Constants.ADD_FRIENDS:
-        return {...state, ...action.friends};
+            return {...state, ...action.friends};
         case Constants.REMOVE_FRIENDS:
-        return _.omit(state, action.friendIds);
+            return _.omit(state, action.friendIds);
         case Constants.SET_FRIENDS:
-        return {...action.friends};
+            return {...action.friends};
         default:
-        return state;
+            return state;
     }
 };
 
@@ -70,9 +73,9 @@ const firstNameReducer = (state, action) => {
 
     switch (action.type) {
         case Constants.SET_FIRST_NAME:
-        return action.firstName;
+            return action.firstName;
         default:
-        return state;
+            return state;
     }
 };
 
@@ -83,9 +86,9 @@ const lastNameReducer = (state, action) => {
 
     switch (action.type) {
         case Constants.SET_LAST_NAME:
-        return action.lastName;
+            return action.lastName;
         default:
-        return state;
+            return state;
     }
 };
 

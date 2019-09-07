@@ -8,6 +8,8 @@ export const REMOVE_EVENTS = 'REMOVE_EVENTS';
 
 export const SET_EVENTS = 'SET_EVENTS';
 
+export const UPDATE_EVENT = 'UPDATE_EVENT';
+
 export const ADD_FRIENDS = 'ADD_FRIENDS';
 
 export const REMOVE_FRIENDS = 'REMOVE_FRIENDS';

@@ -1,61 +1,36 @@
 import * as React from 'react';
 import * as Styles from '../styles/styles';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
-import moment from 'moment';
 import SwitchSelector from 'react-native-switch-selector';
-import { StyleSheet } from 'react-native';
 import { Container, TextInputCard, ScrollView, Text, Card, View, DatePicker, Button, DatePickerCard } from './UI';
-import { getNextHour } from '../utils/Utils';
+import { getNextHour, getFormattedTimeString, getTimeElapsed } from '../utils/Utils';
 
-export interface AddEventProps {
+/** navigation params:
+    title: string;
+    handleOnFinish: (event) => void;
+    finishText: string;
+    startEvent: any;
+**/
 
-}
-
-class AddEvent extends React.Component<AddEventProps | any> {
+class EditEvent extends React.Component<any> {
     static navigationOptions = {
-        // title: `New Event`,
-        // headerStyle: Styles.headerStyle,
         // headerTitleStyle: Styles.headerTitleStyle
         header: null
     };
-
+    
     constructor(props) {
         super(props);
-        this.getTimeString = this.getTimeString.bind(this);
-        this.getTimeElapsed = this.getTimeElapsed.bind(this);
         this.getPublicInviteInput = this.getPublicInviteInput.bind(this);
         this.isFinished = this.isFinished.bind(this);
-        this.handleOnFinish = this.handleOnFinish.bind(this);
         this.state = {
-            name: '',
-            location: '',
-            publicInvite: false,
-            startDate: getNextHour(),
-            endDate: moment(getNextHour()).add(1, 'hour').toDate(),
-        }
+            ...this.props.navigation.getParam('startEvent', {})
+        };
     }
 
     isFinished() {
-        return this.state['name'];
-    }
-
-    handleOnFinish() {
-        if (!this.isFinished()) { return; }
-        this.props.navigation.navigate('InviteFriends', {event: this.state});
-    }
-
-    getTimeString(date: Date) {
-        return moment(date).format("LT, MMM D");
-    }
-
-    getTimeElapsed(start: Date, end: Date) {
-        const duration = moment.duration(moment(end).diff(moment(start)));
-        let str = "";
-        if(duration.asDays() >= 1) {str = str + Math.floor(duration.asDays()) + "d ";}
-        if(duration.hours() >= 1) {str = str + Math.floor(duration.hours()) + "h ";}
-        if(duration.minutes() >= 1) {str = str + Math.floor(duration.minutes()) + "m ";}
-        return str;
+        return this.state.name;
     }
 
     getPublicInviteInput() {
@@ -84,15 +59,16 @@ class AddEvent extends React.Component<AddEventProps | any> {
     }
 
     render() {
+        const { handleOnFinish, title, finishText } = this.props.navigation.state.params;
         const finishComponentStyle = [Styles.headerFinishComponent,  this.isFinished() ? {} : {color: Styles.defaultColorScheme.mediumColor}]
         return (
             <Container
                 navigation={this.props.navigation}
-                finishComponent={ <Text style={finishComponentStyle}>Next</Text> }
-                onFinish={this.handleOnFinish}
+                finishComponent={ <Text style={finishComponentStyle}>{finishText}</Text> }
+                onFinish={() => this.isFinished() ? handleOnFinish(this.state) : {}}
                 titleElementOverride={
                     <View style={Styles.leftRightView}>
-                        <Text style={Styles.headerTitle}>{"Add Event"}</Text>
+                        <Text style={Styles.headerTitle}>{title}</Text>
                         {this.getPublicInviteInput()}
                     </View>
                 }
@@ -117,7 +93,7 @@ class AddEvent extends React.Component<AddEventProps | any> {
                         initialDate={this.state['startDate']}
                         initialShowDatePicker={false}
                         timeText={(
-                            <Text style={[Styles.text, styles.timeText]}>{this.getTimeString(this.state['startDate'])}</Text>
+                            <Text style={Styles.timeText}>{getFormattedTimeString(this.state['startDate'])}</Text>
                         )}
                         // optional={true}
                         // optionalText={"Add start time"}
@@ -135,8 +111,8 @@ class AddEvent extends React.Component<AddEventProps | any> {
                         maximumDate={moment(this.state['startDate']).add(1, 'year').toDate()}
                         timeText={(
                             <View style={Styles.leftRightView}>
-                                <Text style={[Styles.text, styles.timeText]}>{this.getTimeString(this.state['endDate'])}</Text>
-                                <Text style={[Styles.text, styles.timeText]}>{this.getTimeElapsed(this.state['startDate'], this.state['endDate'])}</Text>
+                                <Text style={Styles.timeText}>{getFormattedTimeString(this.state['endDate'])}</Text>
+                                <Text style={Styles.timeText}>{getTimeElapsed(this.state['startDate'], this.state['endDate'])}</Text>
                             </View>
                         )}
                         // optional={this.state['startDate'] !== undefined}
@@ -171,13 +147,6 @@ class AddEvent extends React.Component<AddEventProps | any> {
     }
 }
 
-const styles = StyleSheet.create({
-    timeText: {
-      color: Styles.colors.black,
-      paddingBottom: 5
-    }
-  });
-
 const mapStateToProps = (state) => {
     return {
     };
@@ -189,4 +158,4 @@ const mapDispatchToProps = {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withNavigation(AddEvent));
+)(withNavigation(EditEvent));

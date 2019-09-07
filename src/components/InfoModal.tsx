@@ -2,13 +2,11 @@ import * as React from 'react';
 import * as Styles from '../styles/styles';
 import { connect } from 'react-redux';
 import { withNavigation, StackActions, NavigationActions } from 'react-navigation';
-import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
-import { removeEvents } from '../actions/Actions';
+import { removeEvents, updateEvent } from '../actions/Actions';
 import { getTimeColor, getTimeString } from '../utils/Utils';
-import { TextInputCard, Card, Modal, View, Text, Header, Button, ScrollView, Chat } from './UI';
+import { Card, Modal, View, Text, Header, Button } from './UI';
 import database from '../database/Database';
-import { TouchableWithoutFeedback } from 'react-native';
 
 export interface InfoModalProps {
 
@@ -23,12 +21,14 @@ class InfoModal extends React.Component<InfoModalProps | any> {
         super(props);
         this.closeModal = this.closeModal.bind(this);
         this.deleteEvent = this.deleteEvent.bind(this);
+        this.inviteFriends = this.inviteFriends.bind(this);
+        this.editEvent = this.editEvent.bind(this);
+    }
 
+    inviteFriends() {
         const { eventId } = this.props.navigation.state.params;
-        this.state = {
-            location: '',
-            endDate: moment(this.props.events[eventId].startDate).add(1, 'hour').toDate(),
-        }
+        const { events } = this.props;
+        this.props.navigation.navigate('InviteFriends', { eventId: eventId, event: events[eventId] })
     }
 
     closeModal() {
@@ -49,34 +49,50 @@ class InfoModal extends React.Component<InfoModalProps | any> {
         this.props.navigation.dispatch(resetAction);
     }
 
+    editEvent() {
+        const navigation = this.props.navigation;
+        const { eventId } = navigation.state.params;
+
+        const saveEvent = (event) => {
+            if (!event.name) { return; }
+            this.props.updateEvent(eventId, event);
+            database.updateEvent(eventId, event);
+            // navigation.goBack();
+            this.props.navigation.pop(1)
+        };
+
+        navigation.navigate('EditEvent', {
+            startEvent: this.props.events[eventId],
+            title: "Edit Event",
+            handleOnFinish: saveEvent,
+            finishText: "Save",
+        });
+
+    }
+
     render() {
         const { eventId, colorScheme } = this.props.navigation.state.params;
         if (!this.props.events[eventId]) {
             return (<View />)
         }
-        const { name, endDate, location, description, invited } = this.props.events[eventId];
         return (
             <Modal
-                title={name}
+                title={"Info"}
                 handleClose={this.closeModal}
                 colorScheme={colorScheme}
             >
-                {location ? <View /> : (
-                    <TextInputCard
-                        title={"Location"}
-                        handleChangeText={(text) => this.setState({location: text})}
-                        textValue={this.state['location']}
-                        placeholder={"Type to search a location"}
-                        placeholderTextColor={Styles.colors.transparentBlack}
-                        style={[Styles.inputText, {backgroundColor: colorScheme.mediumColor}]} // TODO fix height issue
-                        colorScheme={colorScheme}
-                        optional={true}
-                        optionalText={"Add location"}
-                        handleClearPress={() => this.setState({location: ''})}
-                        optionalStyle={{backgroundColor: colorScheme.mediumColor}}
-                        optionalTextStyle={{color: colorScheme.darkColor}}
-                    />
-                )}
+                
+                <Button onPress={this.editEvent}>
+                    <Card backgroundColor={colorScheme.mediumColor} style={{marginBottom: 20}}>
+                        <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Edit Event</Text>
+                    </Card>
+                </Button>
+                
+                <Button onPress={this.inviteFriends}>
+                    <Card backgroundColor={colorScheme.mediumColor} style={{marginBottom: 20}}>
+                        <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Invite Friends</Text>
+                    </Card>
+                </Button>
 
                 <Button onPress={this.deleteEvent}>
                     <Card backgroundColor={colorScheme.mediumColor} style={{marginBottom: 20}}>
@@ -96,7 +112,7 @@ const mapStateToProps = (state) => {
 };
   
 const mapDispatchToProps = {
-    removeEvents
+    removeEvents, updateEvent
 };
   
 export default connect(

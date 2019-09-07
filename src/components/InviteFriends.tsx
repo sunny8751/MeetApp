@@ -3,14 +3,8 @@ import * as Styles from '../styles/styles';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import { addEvents } from '../actions/Actions';
-import { getTimeColor, getTimeString } from '../utils/Utils';
 import { Card, Container, View, Text, Header, Button, ScrollView, TextInput, FriendSelect } from './UI';
-import { EventItemProps } from './EventItem';
 import database from '../database/Database';
-
-export interface InviteFriendsProps {
-    event: EventItemProps;
-}
 
 // const users = {
 //     1: {
@@ -23,7 +17,13 @@ export interface InviteFriendsProps {
 //     }
 // }
 
-class InviteFriends extends React.Component<InviteFriendsProps | any> {
+// navigation parameters: event, eventId
+
+export interface InviteFriendsProp {
+    newEvent?: boolean;
+}
+
+class InviteFriends extends React.Component<InviteFriendsProp | any> {
     static navigationOptions = {
         header: null,
     }
@@ -35,10 +35,13 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
         this.handleChangeText = this.handleChangeText.bind(this);
         this.getFriendSuggestions = this.getFriendSuggestions.bind(this);
         this.handleSelectFriend = this.handleSelectFriend.bind(this);
+
+        const { event } = this.props.navigation.state.params;
         this.state = {
-            invited: [],
+            invited: event && event.invited ? event.invited : [],
             searchText: '',
         };
+        console.log('beginning invited', event && event.invited ? event.invited : []);
     }
 
     isFinished() {
@@ -50,16 +53,29 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
     async handleOnFinish() {
         if (!this.isFinished()) { return; }
         console.log("Add event");
-        const invited = [this.props.myId, ...this.state.invited];
+        const { eventId: originalEventId, event: originalEvent } = this.props.navigation.state.params;
+        const { myId } = this.props;
         const event = {
-            ...this.props.navigation.getParam('event', {}),
-            invited
+            ...(originalEvent || {}),
+            invited: this.state.invited
         };
-        const eventId = await database.addEvent(event);
-        for (const friendId of invited) {
-            await database.addFriendInvite(eventId, friendId);
+        const eventId = originalEventId ? originalEventId : await database.addEvent(event);
+        await database.removeFriendInvites(eventId, originalEvent.invited.filter(friendId => event.invited.indexOf(friendId) === -1));
+        if (!originalEventId) {
+            console.log('adding myself', originalEventId)
+            await database.addFriendInvite(eventId, myId);
         }
-        this.props.addEvents({ eventId: event });
+        for (const friendId of event.invited) {
+            if (originalEvent.invited.indexOf(friendId) === -1) {
+                await database.addFriendInvite(eventId, friendId);
+            }
+        }
+        // for (const friendId of originalEvent.invited) {
+        //     if (!(friendId in event.invited)) {
+        //         await database.removeFriendInvite(eventId, friendId);
+        //     }
+        // }
+        this.props.addEvents({ [eventId]: event });
         this.props.navigation.popToTop({immediate: true});
     }
 
@@ -85,10 +101,10 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
     };
 
     getFriendSuggestions() {
-        const suggestions = Object.keys(this.props.friends);
+        const suggestionIds = Object.keys(this.props.friends).sort();
 
         return (
-            suggestions.map((friendId: string) => {
+            suggestionIds.map((friendId: string) => {
                 // TODO: use user id instead
                 const selected = this.state['invited'].indexOf(friendId) !== -1;
                 const friend = this.props.friends[friendId];
@@ -119,6 +135,7 @@ class InviteFriends extends React.Component<InviteFriendsProps | any> {
                         onChangeText={this.handleChangeText}
                         value={this.state.searchText}
                         placeholder={"Type to search..."}
+                        autoCapitalize={"none"}
                     />
                 </View>
                 <ScrollView contentContainerStyle={Styles.extraBottomSpace}>
@@ -134,6 +151,7 @@ const mapStateToProps = (state) => {
     return {
         myId: state.myId,
         friends: state.friends,
+        events: state.events
     };
 };
 

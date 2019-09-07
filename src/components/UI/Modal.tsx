@@ -7,12 +7,15 @@ import { TouchableWithoutFeedback } from 'react-native';
 export interface ModalProps {
     title: string;
     handleClose: ()=>void;
+    handleSave: ()=>void;
     colorScheme?: any;
+    flexSize?: number;
 }
 
 class Modal extends React.Component<ModalProps | any> {
     static defaultProps = {
-        colorScheme: Styles.defaultColorScheme
+        colorScheme: Styles.defaultColorScheme,
+        flexSize: 1
     }
 
     constructor(props) {
@@ -20,7 +23,7 @@ class Modal extends React.Component<ModalProps | any> {
     }
 
     render() {
-        const { title, handleClose, colorScheme } = this.props;
+        const { title, handleClose, colorScheme, flexSize } = this.props;
         const headerButtonStyle = [Styles.headerButton, { backgroundColor: colorScheme.mediumColor }];
         return (
             <View style={{ flex: 1 ,flexDirection: 'column', justifyContent: 'flex-end', backgroundColor: 'transparent'}}>
@@ -29,21 +32,29 @@ class Modal extends React.Component<ModalProps | any> {
                 </TouchableWithoutFeedback>
 
                 <Container
-                    style={{flex: 1, backgroundColor: colorScheme.lightColor, borderRadius: 15}}
+                    style={{flex: flexSize, backgroundColor: colorScheme.lightColor, borderRadius: 15}}
                     headerOverride = {
-                        <View style={[Styles.leftRightView, {paddingLeft: 15, paddingRight: 15, paddingBottom: 15}]}>
-                            <Text style={[Styles.headerTitle, {color: colorScheme.darkColor}]}>{title}</Text>
-                            <Button onPress={handleClose} style={{justifyContent: 'center', paddingTop: 15}}>
+                        <View style={[Styles.leftRightView, {padding: 20}]}>
+                            <Text style={[Styles.headerTitle, {paddingTop: 5, color: colorScheme.darkColor}]}>{title}</Text>
+                            
+                            <Button onPress={handleClose} style={{justifyContent: 'center'}}>
                                 <View style={headerButtonStyle}>
                                     <Ionicons name="ios-close" size={45} color={colorScheme.darkColor} style={{ paddingLeft: 10, paddingRight: 10,  marginBottom: -7, marginTop: -5 }}/>
                                 </View>
                             </Button>
+                            {/* <Button onPress={handleSave} style={{justifyContent: 'center'}}>
+                                <Card backgroundColor={colorScheme.mediumColor} style={{padding: 10, marginLeft: 0, marginRight: 0, marginBottom: 0}}>
+                                    <Text style={{color: colorScheme.darkColor, textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>Save</Text>
+                                </Card>
+                            </Button> */}
                         </View>
                     }
                     disableKeyboardAvoidingView={true}
                     colorScheme={colorScheme}
                 >
-                    {this.props.children}
+                    <ScrollView>
+                        {this.props.children}
+                    </ScrollView>
                 </Container>
             </View>
         );

@@ -8,7 +8,7 @@ import { addEvents, setEvents } from '../actions/Actions';
 import EventsList from './EventsList';
 import { View, Button, Container, Avatar } from './UI';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import {getNextHour } from '../utils/Utils';
+import { getNextHour, getFormattedTimeString, getTimeElapsed } from '../utils/Utils';
 import database from '../database/Database';
 
 export interface MyEventsProps {
@@ -50,10 +50,9 @@ class MyEvents extends React.Component<MyEventsProps | any> {
     // }
 
     componentDidUpdate(prevProps) {
-      if(this.props.events != prevProps.events)
-      {
-        this.setState({sections: this.convertToSections(this.props.events)});
-      }
+        if(this.props.events != prevProps.events) {
+            this.setState({sections: this.convertToSections(this.props.events)});
+        }
     } 
 
     async refresh() {
@@ -93,7 +92,26 @@ class MyEvents extends React.Component<MyEventsProps | any> {
     }
 
     createNewEvent() {
-        this.props.navigation.navigate('AddEvent');
+        const startEvent = {
+            name: '',
+            location: '',
+            publicInvite: false,
+            startDate: getNextHour(),
+            endDate: moment(getNextHour()).add(1, 'hour').toDate(),
+            invited: [this.props.myId]
+        };
+
+        const handleNext = (event) => {
+            if (!event.name) { return; }
+            this.props.navigation.navigate('InviteFriends', {event});
+        };
+
+        this.props.navigation.navigate('EditEvent', {
+            startEvent: startEvent,
+            title: "Edit Event",
+            handleOnFinish: handleNext,
+            finishText: "Next",
+        })
     }
 
     getAddButton(): JSX.Element {

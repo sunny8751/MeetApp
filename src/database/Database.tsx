@@ -60,16 +60,27 @@ class FirebaseService {
 
     async addEvent(event) {
         const doc = await this.eventsRef.doc();
+        console.log('add event', doc.id, event);
         doc.set(event);
         return doc.id;
+    }
+
+    async updateEvent(eventId, event) {
+        await this.eventsRef.doc(eventId).set(event, { merge: true });
     }
 
     async removeEvent(eventId) {
         const doc = this.eventsRef.doc(eventId);
         const invited = (await doc.get()).get('invited');
+        console.log(doc, invited, doc.id);
+
         for (const userId of invited) {
-            await this.removeFriendInvite(eventId, userId);
+            await this.usersRef.doc(userId).update({
+                events: firebase.firestore.FieldValue.arrayRemove(eventId)
+            });
         }
+
+        // await this.removeFriendInvites(eventId, invited);
         await doc.delete();
         return doc.id;
     }
@@ -111,15 +122,33 @@ class FirebaseService {
     }
 
     async addFriendInvite(eventId, userId) {
+        console.log('add friend invite', eventId, userId);
         await this.usersRef.doc(userId).update({
             events: firebase.firestore.FieldValue.arrayUnion(eventId)
         });
     }
 
-    async removeFriendInvite(eventId, userId) {
-        await this.usersRef.doc(userId).update({
-            events: firebase.firestore.FieldValue.arrayRemove(eventId)
-        });
+    async removeFriendInvites(eventId, userIds: string[]) {
+        console.log('remove friend invites', eventId, userIds);
+        if (!userIds || !eventId) {
+            return;
+        }
+        for (const userId of userIds) {
+            await this.usersRef.doc(userId).update({
+                events: firebase.firestore.FieldValue.arrayRemove(eventId)
+            });
+        }
+        
+        let newInvited = [];
+        const originalInvited = await this.getEvent(eventId, 'invited');
+        for (const invitedId of originalInvited) {
+            if (userIds.indexOf(invitedId) === -1) {
+                newInvited.push(invitedId);
+            }
+        }
+        await this.eventsRef.doc(eventId).set({
+            invited: newInvited
+        }, { merge: true });
     }
 
     async updateUser(userId, user) {
@@ -130,11 +159,17 @@ class FirebaseService {
         await this.usersRef.doc(userId).update({
             friends: firebase.firestore.FieldValue.arrayUnion(friendId)
         });
+        await this.usersRef.doc(friendId).update({
+            friends: firebase.firestore.FieldValue.arrayUnion(userId)
+        });
     }
 
     async removeFriend(userId, friendId) {
         await this.usersRef.doc(userId).update({
             friends: firebase.firestore.FieldValue.arrayRemove(friendId)
+        });
+        await this.usersRef.doc(friendId).update({
+            friends: firebase.firestore.FieldValue.arrayRemove(userId)
         });
     }
 
