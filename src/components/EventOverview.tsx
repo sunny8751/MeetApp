@@ -96,9 +96,7 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
                     <Text>Hi</Text>
                 </ScrollView> */}
                 <Chat
-                    userId={myId}
-                    name={firstName + ' ' + lastName}
-                    avatar={avatar}
+                    eventId={eventId}
                 />
             </Container>
             

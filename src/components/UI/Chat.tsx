@@ -1,41 +1,79 @@
 import * as React from 'react'
 import { Platform } from 'react-native';
-import PropTypes from 'prop-types';
+import * as Styles from '../styles/styles';
+import { connect } from 'react-redux';
+// import PropTypes from 'prop-types';
 import { GiftedChat } from 'react-native-gifted-chat';
 import emojiUtils from 'emoji-utils';
 
 import ChatMessage from './ChatMessage';
+import database from '../../database/Database';
 
 export interface ChatProps {
-    userId: string,
-    name: string,
-    avatar: string
+    eventId: string,
 }
 
 class Chat extends React.Component<ChatProps | any> {
-    state = {
-        messages: [],
+
+    constructor(props) {
+        super(props);
+        this.formatMessages = this.formatMessages.bind(this);
+        this.state = {
+            messages: []
+        }
     }
 
-    componentWillMount() {
-        this.setState({
-            messages: [{
-                _id: 1,
-                text: 'I heard this place is really good!!',
-                createdAt: new Date(),
+    formatMessages(messages) {
+        const { friends, myId, firstName, lastName, avatar } = this.props;
+        return messages.map(({senderId, text, createdAt}) => {
+            const sender = senderId === myId ? {firstName, lastName, avatar} : friends[senderId];
+            console.log('sender', friends, senderId, sender);
+            return {
+                _id: createdAt.getTime().toString() + senderId,
+                text,
+                createdAt,
                 user: {
-                    _id: 2,
-                    name: 'Bob',
-                    avatar: 'https://placeimg.com/140/140/any',
-                },
-            }],
-        })
+                    _id: senderId,
+                    name: sender.firstName + ' ' + sender.lastName,
+                    avatar: sender.avatar
+                }
+            }
+        });
+    }
+
+    async componentWillMount() {
+        // this.setState({
+        //     messages: [{
+        //         _id: 1,
+        //         text: 'I heard this place is really good!!',
+        //         createdAt: new Date(),
+        //         user: {
+        //             _id: 2,
+        //             name: 'Bob',
+        //             avatar: 'https://placeimg.com/140/140/any',
+        //         },
+        //     }],
+        // })
+
+        const { eventId } = this.props;
+        console.log('retrieve', eventId, await database.getMessages(eventId));
+        this.setState({
+            messages: this.formatMessages(await database.getMessages(eventId))
+        });
     }
 
     onSend(messages = []) {
+        const { eventId } = this.props;
+        for (const message of messages) {
+            database.addMessage(eventId, {
+                senderId: message.user._id,
+                createdAt: message.createdAt,
+                text: message.text
+            });
+        }
         this.setState(previousState => ({
             messages: GiftedChat.append(previousState.messages, messages),
-        }))
+        }));
     }
 
     renderMessage(props) {
@@ -58,14 +96,14 @@ class Chat extends React.Component<ChatProps | any> {
     }
 
     render() {
-        const { userId, name, avatar } = this.props;
+        const { myId, firstName, lastName, avatar } = this.props;
         return (
             <GiftedChat
                 messages={this.state.messages}
                 onSend={messages => this.onSend(messages)}
                 user={{
-                    _id: userId,
-                    name: name,
+                    _id: myId,
+                    name: firstName + ' ' + lastName,
                     avatar: avatar
                 }}
                 renderMessage={this.renderMessage}
@@ -78,4 +116,20 @@ class Chat extends React.Component<ChatProps | any> {
     }
 }
 
-export default Chat;
+const mapStateToProps = (state) => {
+    return {
+      friends: state.friends,
+      myId: state.myId,
+      firstName: state.firstName,
+      lastName: state.lastName,
+      avatar: state.avatar
+    };
+};
+  
+const mapDispatchToProps = {
+};
+  
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Chat);

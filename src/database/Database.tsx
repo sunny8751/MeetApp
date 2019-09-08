@@ -11,10 +11,17 @@ import moment from 'moment';
 //     return documentSnapshot.data();
 // }
 
+const MESSAGES_PER_COLLECTION = 100;
+
 class FirebaseService {
+    eventsRef: any;
+    usersRef: any;
+    messagesRef: any;
+
     constructor() {
         this.eventsRef = firebase.firestore().collection('events');
         this.usersRef = firebase.firestore().collection('users');
+        this.messagesRef = firebase.firestore().collection('messages');
     }
 
     async loginWithEmail(email, password) {
@@ -59,9 +66,9 @@ class FirebaseService {
     }
 
     async addEvent(event) {
-        const doc = await this.eventsRef.doc();
+        const doc = this.eventsRef.doc();
         console.log('add event', doc.id, event);
-        doc.set(event);
+        await doc.set(event);
         return doc.id;
     }
 
@@ -95,8 +102,8 @@ class FirebaseService {
     }
 
     async addUser(userId, user) {
-        const doc = await this.usersRef.doc(userId);
-        doc.set(user);
+        const doc = this.usersRef.doc(userId);
+        await doc.set(user);
         // return doc.id;
     }
 
@@ -212,6 +219,63 @@ class FirebaseService {
 
     async updatePassword(newPassword) {
         await firebase.auth().currentUser.updatePassword(newPassword);
+    }
+
+    async addMessage(eventId: string, message: any) {
+        const groupChat = this.messagesRef.doc(eventId);
+        const numMessages = (await groupChat.get()).get('numMessages');
+        const numCollections = Math.ceil(numMessages / MESSAGES_PER_COLLECTION);
+
+        if (numMessages % MESSAGES_PER_COLLECTION === 0) {
+            // create new doc
+            await groupChat.collection("messages").doc(numCollections.toString()).set({
+                messages: [message]
+            });
+        } else {
+            await groupChat.collection("messages").doc((numCollections - 1).toString()).update({
+                messages: firebase.firestore.FieldValue.arrayUnion(message)
+            });
+        }
+
+        await groupChat.set({numMessages: numMessages + 1}, {merge: true})
+    }
+
+    // least recent to most recent
+    async getMessages(eventId: string, lastN: number = 20) {
+        const groupChat = this.messagesRef.doc(eventId);
+        const numMessages = (await groupChat.get()).get('numMessages');
+        if (numMessages === 0) {
+            return [];
+        }
+        lastN = Math.min(numMessages, lastN);
+        const numCollections = Math.ceil(numMessages / MESSAGES_PER_COLLECTION);
+
+        const getCollectionMessages = async (collectionNumber: number) => {
+            let collectionMessages = (await groupChat.collection("messages").doc(collectionNumber.toString()).get()).get('messages');
+            collectionMessages.forEach((message, index) => {
+                collectionMessages[index].createdAt = collectionMessages[index].createdAt.toDate();
+            });
+            return collectionMessages;
+        }
+        const messagesInLastCollection = await getCollectionMessages(numCollections - 1);
+        if (messagesInLastCollection.length >= lastN) {
+            // return last lastN messages in last collection
+            return messagesInLastCollection.slice(messagesInLastCollection.length-lastN, messagesInLastCollection.length);
+        } else {
+            // not enough messages
+            let messages = [];
+            lastN -= messagesInLastCollection.length;
+            const startCollection = numCollections - 1 - Math.ceil(lastN / MESSAGES_PER_COLLECTION);
+            for (let i = startCollection; i < numCollections - 1; i += 1) {
+                let collectionMessages = await getCollectionMessages(i);
+                if (i === startCollection && lastN % MESSAGES_PER_COLLECTION !== 0) {
+                    collectionMessages = collectionMessages.slice(collectionMessages.length - (lastN % MESSAGES_PER_COLLECTION), collectionMessages.length);
+                }
+                messages.push(...collectionMessages);
+            }
+            messages.push(...messagesInLastCollection);
+            return messages;
+        }
     }
 }
 

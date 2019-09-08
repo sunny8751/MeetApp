@@ -41,13 +41,14 @@ class MyEvents extends React.Component<MyEventsProps | any> {
         this.props.navigation.navigate('EditProfile');
     }
 
-    // async componentDidMount() {
-    //     // await database.removeEvent('jtYVcg6BGTIwI50gNHMZ');
-    //     await this.refresh();
-    //     // if (this._isMounted) {
-    //     //     this.setState({sections: this.convertToSections(this.props.events)});
-    //     // }
-    // }
+    async componentDidMount() {
+        // await database.removeEvent('jtYVcg6BGTIwI50gNHMZ');
+        // await database.addMessage('Qfr9ilhpCVE7W7z2Cgsh', {senderId: 'johndoe@gmail.com', text: 'This place looks really good!', createdAt: new Date()})
+        // console.log('returned', await database.getMessages('Qfr9ilhpCVE7W7z2Cgsh', 5));
+        // if (this._isMounted) {
+        //     this.setState({sections: this.convertToSections(this.props.events)});
+        // }
+    }
 
     componentDidUpdate(prevProps) {
         if(this.props.events != prevProps.events) {
