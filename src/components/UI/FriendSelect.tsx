@@ -3,7 +3,7 @@ import * as Styles from '../../styles/styles';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import { getTimeColor, getTimeString } from '../../utils/Utils';
-import { Card, Container, View, Text, Header, Button, ScrollView, TextInput } from './';
+import { Card, Avatar, View, Text, Header, Button, ScrollView, TextInput } from './';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export interface FriendSelectProps {
@@ -22,6 +22,9 @@ class FriendSelect extends React.Component<FriendSelectProps | any> {
         return (
             <Button onPress={onPress} disableAnimate>
                 <Card backgroundColor={Styles.defaultColorScheme.lightColor} style={Styles.horizontalLayout}>
+                    <View style={[Styles.center, {paddingRight: 10}]}>
+                        <Avatar size={30} source={avatar} />
+                    </View>
                     <View style={[Styles.flex, {marginTop: "auto", marginBottom: "auto"}]}>
                         <Text style={[Styles.cardHeaderText, {color: Styles.defaultColorScheme.darkColor}]}>{name}</Text>
                         {/* <Text style={[Styles.cardSubheaderText, {color: mediumColor}]}>{subheader}</Text> */}

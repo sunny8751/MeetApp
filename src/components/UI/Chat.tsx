@@ -66,9 +66,10 @@ class Chat extends React.Component<ChatProps | any> {
         const { eventId, friends, myId, firstName, lastName, avatar } = this.props;
         return messages.map(({senderId, text, createdAt}, index) => {
             const sender = senderId === myId ? {firstName, lastName, avatar} : friends[senderId];
+            const messagesLength = this.props.messages[eventId] ? this.props.messages[eventId].messages.length : 0;
             const messageId = reverseIndices ? 
-                1 + index - numMessages :
-                numMessages - index - 1 - (this.props.messages[eventId] ? this.props.messages[eventId].messages.length : 0);
+                numMessages - messagesLength - messages.length + index :
+                numMessages - index - 1 - messagesLength;
             return {
                 _id: messageId,
                 text,
@@ -106,8 +107,8 @@ class Chat extends React.Component<ChatProps | any> {
 
             const { eventId, addMessages } = this.props;
             const { messages: newMessages, numMessages } = await database.getMessages(eventId, Constants.START_NUM_MESSAGES, this.props.messages[eventId].messages.length);
-            console.log('load earlier');
-            addMessages(eventId, this.formatMessages(newMessages, numMessages, true), true);
+            // console.log('load earlier');
+            addMessages(eventId, this.formatMessages(newMessages, numMessages, true).reverse(), true);
             this.isLoadingEarlier = false;
         }
     }
