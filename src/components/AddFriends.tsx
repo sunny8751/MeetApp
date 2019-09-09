@@ -156,6 +156,7 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
                         onChangeText={this.handleChangeText}
                         value={this.state.searchText}
                         placeholder={"Type an email..."}
+                        placeholderTextColor={Styles.colors.grey}
                         autoCapitalize={"none"}
                     />
                 </View>

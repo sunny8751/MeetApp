@@ -42,7 +42,6 @@ const eventsReducer = (state, action) => {
         case Constants.SET_EVENTS:
             return {...action.events};
         case Constants.UPDATE_EVENT:
-            console.log('reducer', {...state, [action.eventId]: {...state[action.eventId], ...action.event}});
             return {...state, [action.eventId]: {...state[action.eventId], ...action.event}}
         default:
             return state;
@@ -92,13 +91,57 @@ const lastNameReducer = (state, action) => {
     }
 };
 
+const messagesReducer = (state, action) => {
+    /**
+     *  {
+     *      eventId: {
+     *          numMessages: number,
+     *          messages: [{
+     *              _id: 1,
+     *              text: 'I heard this place is really good!!',
+     *              createdAt: new Date(),
+     *              user: {
+     *                  _id: 2,
+     *                  name: 'Bob',
+     *                  avatar: 'https://placeimg.com/140/140/any',
+     *              },
+     *          }]
+     *      }
+     *  }
+     */
+    if (typeof state === 'undefined') {
+        return {};
+    }
+
+    switch (action.type) {
+        case Constants.ADD_MESSAGES:
+            return {...state, [action.eventId]: {
+                numMessages: action.prepend ?
+                state[action.eventId].numMessages : 
+                state[action.eventId].numMessages + action.messages.length,
+                messages: action.prepend ?
+                    [...state[action.eventId].messages, ...action.messages] :
+                    [...action.messages, ...state[action.eventId].messages]
+            }};
+        case Constants.REMOVE_MESSAGE_EVENTS:
+            return _.omit(state, action.eventIds);
+        case Constants.SET_MESSAGES:
+            return {...state, [action.eventId]: {
+                numMessages: action.numMessages, messages: action.messages
+            }};
+        default:
+            return state;
+    }
+};
+
 const Reducers = {
     avatar: avatarReducer,
     myId: myIdReducer,
     events: eventsReducer,
     friends: friendsReducer,
     firstName: firstNameReducer,
-    lastName: lastNameReducer
+    lastName: lastNameReducer,
+    messages: messagesReducer
 };
 
 export default combineReducers<MyStore>(Reducers);

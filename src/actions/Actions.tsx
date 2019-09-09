@@ -44,3 +44,14 @@ export const setLastName = (lastName: any) => {
     return { type: Constants.SET_LAST_NAME, lastName }
 };
 
+export const addMessages = (eventId: string, messages: any[], prepend=false) => {
+    return { type: Constants.ADD_MESSAGES, eventId, messages, prepend }
+};
+
+export const removeMessageEvents = (eventIds: string[]) => {
+    return { type: Constants.REMOVE_MESSAGE_EVENTS, eventIds }
+};
+
+export const setMessages = (eventId: string, messages: any[], numMessages: number) => {
+    return { type: Constants.SET_MESSAGES, eventId, messages, numMessages }
+};

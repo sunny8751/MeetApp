@@ -56,7 +56,7 @@ class ChatBubble extends React.Component {
                 <MessageText
                     {...messageTextProps}
                     textStyle={{
-                        left: [styles.standardFont, styles.slackMessageText, messageTextProps.textStyle, messageTextStyle],
+                        left: {...styles.standardFont, ...styles.slackMessageText, ...messageTextProps.textStyle, ...messageTextStyle},
                     }}
                 />
             );

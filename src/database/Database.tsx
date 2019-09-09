@@ -4,6 +4,7 @@
 // import * as Schemas from './Schemas';
 import firebase from 'react-native-firebase'
 import moment from 'moment';
+import * as Constants from '../constants/Constants';
 
 // export const myId = '9TqXXYoMasO9PnYsQwcM';
 // export const getUserInfo = async (uuid: string) => {
@@ -67,9 +68,10 @@ class FirebaseService {
 
     async addEvent(event) {
         const doc = this.eventsRef.doc();
-        console.log('add event', doc.id, event);
         await doc.set(event);
-        return doc.id;
+        const eventId = doc.id;
+        await this.messagesRef.doc(eventId).set({numMessages: 0})
+        return eventId;
     }
 
     async updateEvent(eventId, event) {
@@ -221,6 +223,37 @@ class FirebaseService {
         await firebase.auth().currentUser.updatePassword(newPassword);
     }
 
+    async addMessagesListener(eventId: string, listener: (numMessages: number)=> {}) {
+        const unsubscriber = this.messagesRef.doc(eventId).onSnapshot(
+            async function(snapshot) {
+                // const response = snapshot.docChanges();
+                listener(await snapshot.get('numMessages'));
+                // response.forEach(function(change) {
+                //         if (change.type === "added") {
+                //             var bodyPaint="New favorites: ";
+                //         }
+                //         if (change.type === "modified") {
+                //             var bodyPaint="Modified favorites: "; 
+                //         }
+                //         if (change.type === "removed") {
+                //             var bodyPaint="Removed favorites: ";
+                //         }
+        
+                //     navigator.serviceWorker.ready.then(function(registration) {
+                //         const title = 'LA BUENOS AIRES';
+                //         const options = {
+                //           body: bodyPaint,
+                //           icon: 'images/icon.png',
+                //           badge: 'images/badge.png'
+                //         };
+                //         registration.showNotification(title, options);
+                //       });
+                // });
+            }
+        );
+        return unsubscriber;
+    }
+
     async addMessage(eventId: string, message: any) {
         const groupChat = this.messagesRef.doc(eventId);
         const numMessages = (await groupChat.get()).get('numMessages');
@@ -241,14 +274,22 @@ class FirebaseService {
     }
 
     // least recent to most recent
-    async getMessages(eventId: string, lastN: number = 20) {
+    async getMessages(eventId: string, lastN: number = Constants.START_NUM_MESSAGES, endOffset: number = 0) {
+        const nullReturn = {messages: [], numMessages: 0};
+        if (lastN === 0) {
+            return nullReturn;
+        }
         const groupChat = this.messagesRef.doc(eventId);
         const numMessages = (await groupChat.get()).get('numMessages');
         if (numMessages === 0) {
-            return [];
+            return nullReturn;
         }
-        lastN = Math.min(numMessages, lastN);
-        const numCollections = Math.ceil(numMessages / MESSAGES_PER_COLLECTION);
+        const endNumMessages = Math.max(numMessages - endOffset, 0);
+        lastN = Math.min(endNumMessages, lastN);
+        if (lastN === 0) {
+            return nullReturn;
+        }
+        const numCollections = Math.ceil(endNumMessages / MESSAGES_PER_COLLECTION);
 
         const getCollectionMessages = async (collectionNumber: number) => {
             let collectionMessages = (await groupChat.collection("messages").doc(collectionNumber.toString()).get()).get('messages');
@@ -258,13 +299,16 @@ class FirebaseService {
             return collectionMessages;
         }
         const messagesInLastCollection = await getCollectionMessages(numCollections - 1);
-        if (messagesInLastCollection.length >= lastN) {
+        const numMessagesInLastCollection = endNumMessages % MESSAGES_PER_COLLECTION;
+        
+
+        let messages = [];
+        if (numMessagesInLastCollection >= lastN) {
             // return last lastN messages in last collection
-            return messagesInLastCollection.slice(messagesInLastCollection.length-lastN, messagesInLastCollection.length);
+            messages = messagesInLastCollection.slice(numMessagesInLastCollection-lastN, numMessagesInLastCollection);
         } else {
             // not enough messages
-            let messages = [];
-            lastN -= messagesInLastCollection.length;
+            lastN -= numMessagesInLastCollection;
             const startCollection = numCollections - 1 - Math.ceil(lastN / MESSAGES_PER_COLLECTION);
             for (let i = startCollection; i < numCollections - 1; i += 1) {
                 let collectionMessages = await getCollectionMessages(i);
@@ -274,8 +318,8 @@ class FirebaseService {
                 messages.push(...collectionMessages);
             }
             messages.push(...messagesInLastCollection);
-            return messages;
         }
+        return {messages, numMessages};
     }
 }
 

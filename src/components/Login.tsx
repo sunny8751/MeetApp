@@ -27,7 +27,26 @@ class Login extends React.Component<LoginProps | any> {
             username: '',
             password: ''
         };
+        this.login('sunny8751@gmail.com', 'password');
     }
+
+    // async componentDidMount() {
+    //     const userId = 'sunny8751@gmail.com';
+    //     const { setMyId, setFirstName, setLastName, setAvatar, setFriends, setEvents } = this.props;
+    //     const { firstName, lastName, avatar, friendIds, events } = await database.getUser(userId);
+    //         setMyId(userId);
+    //         setFirstName(firstName);
+    //         setLastName(lastName);
+    //         setAvatar(avatar);
+    //         setFriends(await database.getFriends(userId));
+    //         setEvents(await database.getEvents(userId));
+
+    //         const resetAction = StackActions.reset({
+    //             index: 0,
+    //             actions: [NavigationActions.navigate({ routeName: 'Main', action: NavigationActions.navigate({ routeName: 'MyEvents' }) })],
+    //         });
+    //         this.props.navigation.dispatch(resetAction);
+    // }
 
     populateLogin(username, password) {
         this.setState({
