@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { AntDesign } from '@expo/vector-icons';
-import {Image} from 'react-native';
+// import {Image} from 'react-native';
+import { CachedImage as Image } from 'react-native-cached-image';
 import * as Constants from '../../constants/Constants';
 import { TextInputCard, Card, Container, View, Text, Header, Button } from './';
 import * as Styles from '../../styles/styles';

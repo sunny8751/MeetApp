@@ -11,11 +11,16 @@ export interface ModalProps {
     handleSave: ()=>void;
     colorScheme?: any;
     flexSize?: number;
+    topFlexSize?: number;
+    bottomFlexSize?: number;
+    style?: any;
 }
 
 class Modal extends React.Component<ModalProps | any> {
     static defaultProps = {
         colorScheme: Styles.defaultColorScheme,
+        topFlexSize: 1,
+        bottomFlexSize: 0,
         flexSize: 1
     }
 
@@ -24,17 +29,18 @@ class Modal extends React.Component<ModalProps | any> {
     }
 
     render() {
-        const { title, handleClose, colorScheme, flexSize } = this.props;
+        const { style, title, handleClose, colorScheme, flexSize, topFlexSize, bottomFlexSize } = this.props;
         const headerButtonStyle = [Styles.headerButton, { backgroundColor: colorScheme.mediumColor }];
+        console.log(style);
         return (
             <BlurView blurType="light" blurAmount={20} style={Styles.fullscreenAbsolute}>
                 <View style={{ flex: 1 ,flexDirection: 'column', justifyContent: 'flex-end', backgroundColor: 'transparent'}}>
                     <TouchableWithoutFeedback onPress={handleClose}>
-                        <View style={{flex: 1}}/>
+                        <View style={{flex: topFlexSize}}/>
                     </TouchableWithoutFeedback>
 
                     <Container
-                        style={{flex: flexSize, backgroundColor: colorScheme.lightColor, borderRadius: 15}}
+                        style={[{flex: flexSize, backgroundColor: colorScheme.lightColor, borderRadius: 15}, style]}
                         headerOverride = {
                             <View style={[Styles.leftRightView, {padding: 20}]}>
                                 <Text style={[Styles.headerTitle, {paddingTop: 5, color: colorScheme.darkColor}]}>{title}</Text>
@@ -54,10 +60,14 @@ class Modal extends React.Component<ModalProps | any> {
                         disableKeyboardAvoidingView={true}
                         colorScheme={colorScheme}
                     >
-                        <ScrollView>
+                        <ScrollView style={{paddingBottom: 20}}>
                             {this.props.children}
                         </ScrollView>
                     </Container>
+
+                    <TouchableWithoutFeedback onPress={handleClose}>
+                        <View style={{flex: bottomFlexSize}}/>
+                    </TouchableWithoutFeedback>
                 </View>
             </BlurView>
         );

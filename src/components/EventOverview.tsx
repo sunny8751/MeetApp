@@ -24,12 +24,16 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
         // headerLeft: <Button onPress={() => console.log('click')}><Text>{"Hello"}</Text></Button>
     }
 
+    eventId: string;
+    colorScheme: any;
+
     constructor(props) {
         super(props);
         this.openInfoModal = this.openInfoModal.bind(this);
         this.state = {
             refresh: false
-        }
+        };
+        ({ eventId: this.eventId, colorScheme: this.colorScheme } = this.props.navigation.state.params);
     }
 
     changeTitle() {
@@ -41,18 +45,16 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
     }
 
     openInfoModal() {
-        const { eventId, colorScheme } = this.props.navigation.state.params;
-        console.log('open info', eventId);
-        this.props.navigation.navigate('InfoModal', { eventId, colorScheme })
+        console.log('open info', this.eventId);
+        this.props.navigation.navigate('InfoModal', { eventId: this.eventId, colorScheme: this.colorScheme })
     }
 
     render() {
         const { myId, firstName, lastName, avatar, events, friends } = this.props;
-        const { eventId, colorScheme } = this.props.navigation.state.params;
-        if (!this.props.events[eventId]) {
+        if (!this.props.events[this.eventId]) {
             return (<View />)
         }
-        const { name, publicInvite, startDate, endDate, location, description, invited } = events[eventId];
+        const { name, publicInvite, startDate, endDate, location, description, invited } = events[this.eventId];
         const othersInvited = invited.filter(id => id !== myId);
         return (
             <Container
@@ -61,13 +63,13 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
                 titleElementOverride={(
                     <View style={Styles.leftRightView}>
                         <View>
-                            <Text style={[Styles.headerTitle, {color: colorScheme.darkColor}]}>{name}</Text>
-                            {location ? <Text style={[Styles.cardSubheaderText, {color: colorScheme.mediumColor}]}>{location}</Text> : <View />}
+                            <Text style={[Styles.headerTitle, {color: this.colorScheme.darkColor}]}>{name}</Text>
+                            {location ? <Text style={[Styles.cardSubheaderText, {color: this.colorScheme.mediumColor}]}>{location}</Text> : <View />}
                             <Text style={[Styles.cardSubheaderText, {color: getTimeColor(startDate)}]}>{getTimeString(startDate, endDate)}</Text>
                         </View>
                         
                         <Button
-                            onPress={() => this.props.navigation.navigate('InviteFriends', { eventId: eventId, event: events[eventId] })}
+                            onPress={() => this.props.navigation.navigate('InviteFriends', { eventId: this.eventId, event: events[this.eventId] })}
                             style={{flex: 1, paddingLeft: 10, justifyContent: 'flex-end', alignItems: 'flex-end'}}
                         >
                             {othersInvited.length > 0 ? (
@@ -79,24 +81,24 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
                                       }, {})}
                                 />
                             ) : (
-                                <Card backgroundColor={colorScheme.lightColor} style={{marginRight: 0, marginLeft: 0, marginBottom: 0}}>
-                                    <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Invite Friends</Text>
+                                <Card backgroundColor={this.colorScheme.lightColor} style={{marginRight: 0, marginLeft: 0, marginBottom: 0}}>
+                                    <Text style={[Styles.cardSubheaderText, {color: this.colorScheme.darkColor, textAlign: 'center'}]}>Invite Friends</Text>
                                 </Card>
                             )}
                         </Button>
                     </View>
                 )}
                 finishComponent={
-                    <Ionicons name="ios-information" size={45} color={colorScheme.darkColor} style={{ paddingLeft: 17, paddingRight: 17,  marginBottom: -5, marginTop: -5 }}/>
+                    <Ionicons name="ios-information" size={45} color={this.colorScheme.darkColor} style={{ paddingLeft: 17, paddingRight: 17,  marginBottom: -5, marginTop: -5 }}/>
                 }
                 onFinish={this.openInfoModal}
-                colorScheme={colorScheme}
+                colorScheme={this.colorScheme}
             >
                 {/* <ScrollView contentContainerStyle={Styles.extraBottomSpace}>
                     <Text>Hi</Text>
                 </ScrollView> */}
                 <Chat
-                    eventId={eventId}
+                    eventId={this.eventId}
                 />
             </Container>
             

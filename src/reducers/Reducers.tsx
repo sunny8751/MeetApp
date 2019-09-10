@@ -115,14 +115,17 @@ const messagesReducer = (state, action) => {
 
     switch (action.type) {
         case Constants.ADD_MESSAGES:
-            return {...state, [action.eventId]: {
-                numMessages: action.prepend ?
-                state[action.eventId].numMessages : 
-                state[action.eventId].numMessages + action.messages.length,
-                messages: action.prepend ?
-                    [...state[action.eventId].messages, ...action.messages] :
-                    [...action.messages, ...state[action.eventId].messages]
-            }};
+            if (action.prepend) {
+                return {...state, [action.eventId]: {
+                    numMessages: state[action.eventId].numMessages,
+                    messages: [...state[action.eventId].messages, ...action.messages]
+                }};
+            } else {
+                return {...state, [action.eventId]: {
+                    numMessages: state[action.eventId].numMessages + action.messages.length,
+                    messages: [...action.messages, ...state[action.eventId].messages]
+                }};
+            }
         case Constants.REMOVE_MESSAGE_EVENTS:
             return _.omit(state, action.eventIds);
         case Constants.SET_MESSAGES:

@@ -2,6 +2,7 @@ import * as Styles from '../styles/styles';
 // import pSBC from 'shade-blend-color';
 import Color from 'color';
 import moment from 'moment';
+import ImagePicker from 'react-native-image-picker';
 
 export const getDarkerColor = (color=Styles.colors.grey, colorMultiplier=0.2) => {
     // return pSBC(-colorMultiplier, color);
@@ -44,3 +45,30 @@ export const getTimeElapsed = (start: Date, end: Date) => {
     return str;
 }
 
+export const addAvatar = async (setAvatar) => {
+    const options = {
+        title: 'Select Avatar',
+        storageOptions: {
+            skipBackup: true,
+            path: 'images',
+        },
+        quality: 0.5,
+    };
+    ImagePicker.showImagePicker(options, async (response) => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.error) {
+          console.log('ImagePicker Error: ', response.error);
+        } else {
+            const source = response.uri;
+
+            // You can also display the image using data:
+            // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+            // this.setState({
+            //     avatar: source,
+            // });
+            setAvatar(source);
+        }
+      });
+}

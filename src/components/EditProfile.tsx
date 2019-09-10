@@ -7,6 +7,7 @@ import { AntDesign } from '@expo/vector-icons';
 import * as Constants from './../constants/Constants';
 import { setFriends, setEvents, setMyId, setFirstName, setLastName, setAvatar } from '../actions/Actions';
 import { Avatar, TextInputCard, Card, Container, View, Text, Header, Button, ScrollView, Chat } from './UI';
+import { addAvatar } from '../utils/Utils';
 import database from '../database/Database';
 
 export interface EditProfileProps {
@@ -23,7 +24,6 @@ class EditProfile extends React.Component<EditProfileProps | any> {
         this.logout = this.logout.bind(this);
         this.saveChanges = this.saveChanges.bind(this);
         this.isFinished = this.isFinished.bind(this);
-        this.addAvatar = this.addAvatar.bind(this);
         this.profileCard = this.profileCard.bind(this);
         this.canSave = this.canSave.bind(this);
         this.addFriends = this.addFriends.bind(this);
@@ -44,31 +44,31 @@ class EditProfile extends React.Component<EditProfileProps | any> {
         this.props.navigation.navigate('AddFriends');
     }
 
-    async addAvatar() {
-        const options = {
-            title: 'Select Avatar',
-            storageOptions: {
-                skipBackup: true,
-                path: 'images',
-            },
-        };
-        ImagePicker.showImagePicker(options, async (response) => {
-            if (response.didCancel) {
-              console.log('User cancelled image picker');
-            } else if (response.error) {
-              console.log('ImagePicker Error: ', response.error);
-            } else {
-                const source = response.uri;
+    // async addAvatar() {
+    //     const options = {
+    //         title: 'Select Avatar',
+    //         storageOptions: {
+    //             skipBackup: true,
+    //             path: 'images',
+    //         },
+    //     };
+    //     ImagePicker.showImagePicker(options, async (response) => {
+    //         if (response.didCancel) {
+    //           console.log('User cancelled image picker');
+    //         } else if (response.error) {
+    //           console.log('ImagePicker Error: ', response.error);
+    //         } else {
+    //             const source = response.uri;
 
-                // You can also display the image using data:
-                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+    //             // You can also display the image using data:
+    //             // const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
-                this.setState({
-                    avatar: source,
-                });
-            }
-          });
-    }
+    //             this.setState({
+    //                 avatar: source,
+    //             });
+    //         }
+    //       });
+    // }
 
     canSave() {
         const { firstName, lastName, username, password, passwordConfirmation, avatar: avatarFile } = this.state;
@@ -170,14 +170,14 @@ class EditProfile extends React.Component<EditProfileProps | any> {
                 finishComponent={<Text style={finishComponentStyle}>Save</Text>}
             >
                 <ScrollView contentContainerStyle={Styles.extraBottomSpace}>
-                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                    <View style={Styles.center}>
                         <Button
                             style={[Styles.horizontalCenter, {marginBottom: 20}]}
-                            onPress={this.addAvatar}
+                            onPress={() => {addAvatar((avatar) => { this.setState({ avatar }); })}}
                         >
                             <Avatar
                                 source={avatar}
-                                size={80}
+                                size={100}
                             />
                         </Button>
                     </View>

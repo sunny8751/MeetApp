@@ -5,8 +5,7 @@ import { withNavigation, StackActions, NavigationActions } from 'react-navigatio
 import ImagePicker from 'react-native-image-picker';
 import * as Constants from './../constants/Constants';
 import { setFriends, setEvents, setMyId, setFirstName, setLastName, setAvatar } from '../actions/Actions';
-import { getTimeColor, getTimeString } from '../utils/Utils';
-import Profile from './Profile';
+import { addAvatar } from '../utils/Utils';
 import { Avatar, TextInputCard, Card, Container, View, Text, Header, Button, ScrollView, Chat } from './UI';
 import database from '../database/Database';
 
@@ -22,7 +21,6 @@ class CreateAccount extends React.Component<CreateAccountProps | any> {
         super(props);
         this.createAccount = this.createAccount.bind(this);
         this.isFinished = this.isFinished.bind(this);
-        this.addAvatar = this.addAvatar.bind(this);
 
         const { firstName, lastName, avatar } = this.props;
         this.state = {
@@ -35,31 +33,31 @@ class CreateAccount extends React.Component<CreateAccountProps | any> {
         };
     }
 
-    async addAvatar() {
-        const options = {
-            title: 'Select Avatar',
-            storageOptions: {
-                skipBackup: true,
-                path: 'images',
-            },
-        };
-        ImagePicker.showImagePicker(options, async (response) => {
-            if (response.didCancel) {
-              console.log('User cancelled image picker');
-            } else if (response.error) {
-              console.log('ImagePicker Error: ', response.error);
-            } else {
-                const source = response.uri;
+    // async addAvatar() {
+    //     const options = {
+    //         title: 'Select Avatar',
+    //         storageOptions: {
+    //             skipBackup: true,
+    //             path: 'images',
+    //         },
+    //     };
+    //     ImagePicker.showImagePicker(options, async (response) => {
+    //         if (response.didCancel) {
+    //           console.log('User cancelled image picker');
+    //         } else if (response.error) {
+    //           console.log('ImagePicker Error: ', response.error);
+    //         } else {
+    //             const source = response.uri;
 
-                // You can also display the image using data:
-                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+    //             // You can also display the image using data:
+    //             // const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
-                this.setState({
-                    avatar: source,
-                });
-            }
-          });
-    }
+    //             this.setState({
+    //                 avatar: source,
+    //             });
+    //         }
+    //       });
+    // }
 
     isFinished() {
         const { firstName, lastName, username, password, passwordConfirmation, isUsernameLocked } = this.state;
@@ -84,13 +82,12 @@ class CreateAccount extends React.Component<CreateAccountProps | any> {
         try {
             const userId = await database.createAccount(username, password);
             const avatar = (avatarFile === Constants.DEFAULT_AVATAR) ? avatarFile : await database.uploadProfilePicture(avatarFile, userId);
+            const friends = [];
             await database.addUser(userId, {
                 firstName,
                 lastName,
-                friends: [],
-                events: [],
-                avatar
-            });
+                avatar,
+            }, friends);
             setMyId(userId);
             setFirstName(firstName);
             setLastName(lastName);
@@ -120,7 +117,7 @@ class CreateAccount extends React.Component<CreateAccountProps | any> {
                     <View style={{justifyContent: 'center', alignItems: 'center'}}>
                         <Button
                             style={[Styles.horizontalCenter, {marginBottom: 20}]}
-                            onPress={this.addAvatar}
+                            onPress={() => {addAvatar((avatar) => { this.setState({ avatar }); })}}
                         >
                             <Avatar
                                 source={this.state.avatar}

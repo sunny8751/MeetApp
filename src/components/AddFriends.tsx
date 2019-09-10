@@ -17,6 +17,7 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
     }
 
     _isMounted = false;
+    colorScheme: any;
     
     constructor(props) {
         super(props);
@@ -34,6 +35,7 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
             suggestions: this.props.friends,
             refresh: false
         };
+        this.colorScheme = Styles.defaultColorScheme;
     }
 
     componentDidMount() {
@@ -55,6 +57,8 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
 
     selectFriend(friendId) {
         console.log('select', friendId);
+        const friend = this.props.friends[friendId]; // TODO may not be friend
+        this.props.navigation.navigate('ProfileModal', {userId: friendId, user: friend, colorScheme: this.colorScheme});
     }
 
     isFriend(friendId) {
@@ -107,7 +111,6 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
 
     getFriendSuggestions() {
         const { suggestions } = this.state;
-        const colorScheme = Styles.defaultColorScheme;
         return (
             Object.keys(suggestions).sort().map((friendId: string) => {
                 // TODO: use user id instead
@@ -124,7 +127,7 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
                             <Button onPress={() => this.removeFriend(friendId)}  style={Styles.center}>
                                 <Card style={[Styles.headerButton, Styles.horizontalLayout, {padding: 10, marginBottom: 0, marginRight: 0, marginLeft: 0, backgroundColor: Styles.colors.red}]}>
                                     <AntDesign name="deleteuser" size={20} style={{ paddingRight: 4 }}/>
-                                    <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor}]}>Remove</Text>
+                                    <Text style={[Styles.cardSubheaderText, {color: this.colorScheme.darkColor}]}>Remove</Text>
                                 </Card>
                             </Button>
                         }
@@ -132,7 +135,7 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
                             <Button onPress={() => this.addFriend(friendId, friend)}  style={Styles.center}>
                                 <Card style={[Styles.headerButton, Styles.horizontalLayout, {padding: 10, marginBottom: 0, marginRight: 0, marginLeft: 0, backgroundColor: Styles.colors.green}]}>
                                     <AntDesign name="adduser" size={20} style={{ paddingRight: 4 }}/>
-                                    <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor}]}>Add</Text>
+                                    <Text style={[Styles.cardSubheaderText, {color: this.colorScheme.darkColor}]}>Add</Text>
                                 </Card>
                             </Button>
                         }

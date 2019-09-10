@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 import { Provider } from 'react-redux';
-import { createAppContainer, createStackNavigator } from 'react-navigation';
+import { createAppContainer, createStackNavigator, SafeAreaView } from 'react-navigation';
 import { createStore } from 'redux';
 import Reducers from './src/reducers/Reducers';
 import MyEvents from './src/components/MyEvents';
 import EventOverview from './src/components/EventOverview';
 import InviteFriends from './src/components/InviteFriends';
 import InfoModal from './src/components/InfoModal';
-import ProfileModal from './src/components/Profile';
 import Login from './src/components/Login';
 import CreateAccount from './src/components/CreateAccount';
 import EditProfile from './src/components/EditProfile';
 import AddFriends from './src/components/AddFriends';
 import EditEvent from './src/components/EditEvent';
+import ProfileModal from './src/components/ProfileModal';
 
 export interface MyStore {
     count: number;
@@ -50,7 +50,7 @@ const MainStack = createStackNavigator(
         EditProfile: EditProfile,
         EventOverview: EventOverview,
         EditEvent: EditEvent,
-        InviteFriends: InviteFriends
+        InviteFriends: InviteFriends,
     },
     {
         // initialRouteName: 'Login',
@@ -70,6 +70,9 @@ const RootStack = createStackNavigator(
       InfoModal: {
         screen: InfoModal,
       },
+      ProfileModal: {
+          screen: ProfileModal
+      }
     },
     {
         mode: 'modal',
@@ -84,9 +87,12 @@ const Navigation = createAppContainer(RootStack);
 export default class App extends React.Component {
     render() {
         return (
-            <Provider store={store}>
-                <Navigation />
-            </Provider>
+            <SafeAreaView style={{flex: 1}}>
+                <Provider store={store}>
+                    <Navigation />
+                </Provider>
+            </SafeAreaView>
+            
         );
     }
 }

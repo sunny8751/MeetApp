@@ -17,11 +17,15 @@ const MESSAGES_PER_COLLECTION = 100;
 class FirebaseService {
     eventsRef: any;
     usersRef: any;
+    userEventsRef: any;
+    userFriendsRef: any;
     messagesRef: any;
 
     constructor() {
         this.eventsRef = firebase.firestore().collection('events');
         this.usersRef = firebase.firestore().collection('users');
+        this.userEventsRef = firebase.firestore().collection('userEvents');
+        this.userFriendsRef = firebase.firestore().collection('userFriends');
         this.messagesRef = firebase.firestore().collection('messages');
     }
 
@@ -84,7 +88,7 @@ class FirebaseService {
         console.log(doc, invited, doc.id);
 
         for (const userId of invited) {
-            await this.usersRef.doc(userId).update({
+            await this.userEventsRef.doc(userId).update({
                 events: firebase.firestore.FieldValue.arrayRemove(eventId)
             });
         }
@@ -103,14 +107,18 @@ class FirebaseService {
         }
     }
 
-    async addUser(userId, user) {
-        const doc = this.usersRef.doc(userId);
-        await doc.set(user);
+    async addUser(userId, user, friends) {
+        const userDoc = this.usersRef.doc(userId);
+        await userDoc.set(user);
+        const userEventDoc = this.userEventsRef.doc(userId);
+        await userEventDoc.set({events: []});
+        const userFriendDoc = this.userFriendsRef.doc(userId);
+        await userFriendDoc.set({friends: []});
         // return doc.id;
     }
 
     async getFriends(userId) {
-        const friendIds = await this.getUser(userId, 'friends');
+        const friendIds = (await this.userFriendsRef.doc(userId).get()).get('friends');
         let friends = {};
         for (const id of friendIds) {
             friends[id] = await this.getUser(id);
@@ -119,7 +127,7 @@ class FirebaseService {
     }
 
     async getEvents(userId) {
-        const eventIds = await database.getUser(userId, 'events');
+        const eventIds = (await this.userEventsRef.doc(userId).get()).get('events');
         let events = {};
         for (const id of eventIds) {
             const event = await database.getEvent(id);
@@ -132,7 +140,7 @@ class FirebaseService {
 
     async addFriendInvite(eventId, userId) {
         console.log('add friend invite', eventId, userId);
-        await this.usersRef.doc(userId).update({
+        await this.userEventsRef.doc(userId).update({
             events: firebase.firestore.FieldValue.arrayUnion(eventId)
         });
     }
@@ -143,7 +151,7 @@ class FirebaseService {
             return;
         }
         for (const userId of userIds) {
-            await this.usersRef.doc(userId).update({
+            await this.userEventsRef.doc(userId).update({
                 events: firebase.firestore.FieldValue.arrayRemove(eventId)
             });
         }
@@ -165,21 +173,24 @@ class FirebaseService {
     }
 
     async addFriend(userId, friendId) {
-        await this.usersRef.doc(userId).update({
+        await this.userFriendsRef.doc(userId).update({
             friends: firebase.firestore.FieldValue.arrayUnion(friendId)
         });
-        await this.usersRef.doc(friendId).update({
+        await this.userFriendsRef.doc(friendId).update({
             friends: firebase.firestore.FieldValue.arrayUnion(userId)
         });
     }
 
     async removeFriend(userId, friendId) {
-        await this.usersRef.doc(userId).update({
+        console.log('removing1');
+        await this.userFriendsRef.doc(userId).update({
             friends: firebase.firestore.FieldValue.arrayRemove(friendId)
         });
-        await this.usersRef.doc(friendId).update({
+        console.log('removing2');
+        await this.userFriendsRef.doc(friendId).update({
             friends: firebase.firestore.FieldValue.arrayRemove(userId)
         });
+        console.log('removing3');
     }
 
     async uploadProfilePicture(source, userId) {

@@ -27,7 +27,6 @@ class Login extends React.Component<LoginProps | any> {
             username: '',
             password: ''
         };
-        this.login('sunny8751@gmail.com', 'password');
     }
 
     // async componentDidMount() {
@@ -61,7 +60,7 @@ class Login extends React.Component<LoginProps | any> {
         const { setMyId, setFirstName, setLastName, setAvatar, setFriends, setEvents } = this.props;
         try {
             const userId = await database.loginWithEmail(username, password);
-            const { firstName, lastName, avatar, friendIds, events } = await database.getUser(userId);
+            const { firstName, lastName, avatar } = await database.getUser(userId);
             setMyId(userId);
             setFirstName(firstName);
             setLastName(lastName);

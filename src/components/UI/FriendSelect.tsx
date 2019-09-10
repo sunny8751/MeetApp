@@ -23,7 +23,7 @@ class FriendSelect extends React.Component<FriendSelectProps | any> {
             <Button onPress={onPress} disableAnimate>
                 <Card backgroundColor={Styles.defaultColorScheme.lightColor} style={Styles.horizontalLayout}>
                     <View style={[Styles.center, {paddingRight: 10}]}>
-                        <Avatar size={30} source={avatar} />
+                        <Avatar size={40} source={avatar} />
                     </View>
                     <View style={[Styles.flex, {marginTop: "auto", marginBottom: "auto"}]}>
                         <Text style={[Styles.cardHeaderText, {color: Styles.defaultColorScheme.darkColor}]}>{name}</Text>

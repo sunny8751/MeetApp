@@ -139,6 +139,8 @@ android {
 }
 
 dependencies {
+    implementation project(':rn-fetch-blob')
+    implementation project(':@react-native-community_async-storage')
     implementation project(':@react-native-community_blur')
     implementation project(':react-native-image-picker')
     implementation project(':@react-native-firebase_firestore')

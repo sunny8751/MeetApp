@@ -27,6 +27,9 @@ class InviteFriends extends React.Component<InviteFriendsProp | any> {
     static navigationOptions = {
         header: null,
     }
+
+    event: any;
+    eventId: string;
     
     constructor(props) {
         super(props);
@@ -36,12 +39,12 @@ class InviteFriends extends React.Component<InviteFriendsProp | any> {
         this.getFriendSuggestions = this.getFriendSuggestions.bind(this);
         this.handleSelectFriend = this.handleSelectFriend.bind(this);
 
-        const { event } = this.props.navigation.state.params;
+        ({ event: this.event, eventId: this.eventId } = this.props.navigation.state.params);
         this.state = {
-            invited: event && event.invited ? event.invited : [],
+            invited: this.event && this.event.invited ? this.event.invited : [],
             searchText: '',
         };
-        console.log('beginning invited', event && event.invited ? event.invited : []);
+        console.log('beginning invited', this.event && this.event.invited ? this.event.invited : []);
     }
 
     isFinished() {
@@ -53,7 +56,8 @@ class InviteFriends extends React.Component<InviteFriendsProp | any> {
     async handleOnFinish() {
         if (!this.isFinished()) { return; }
         console.log("Add event");
-        const { eventId: originalEventId, event: originalEvent } = this.props.navigation.state.params;
+        const originalEventId = this.eventId;
+        const originalEvent = this.event;
         const { myId } = this.props;
         const event = {
             ...(originalEvent || {}),

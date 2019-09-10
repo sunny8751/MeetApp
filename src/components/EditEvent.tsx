@@ -19,6 +19,10 @@ class EditEvent extends React.Component<any> {
         // headerTitleStyle: Styles.headerTitleStyle
         header: null
     };
+
+    handleOnFinish: () => {};
+    title: string;
+    finishText: string;
     
     constructor(props) {
         super(props);
@@ -27,6 +31,8 @@ class EditEvent extends React.Component<any> {
         this.state = {
             ...this.props.navigation.getParam('startEvent', {})
         };
+
+        ({ handleOnFinish: this.handleOnFinish, title: this.title, finishText: this.finishText } = this.props.navigation.state.params);
     }
 
     isFinished() {
@@ -59,16 +65,15 @@ class EditEvent extends React.Component<any> {
     }
 
     render() {
-        const { handleOnFinish, title, finishText } = this.props.navigation.state.params;
         const finishComponentStyle = [Styles.headerFinishComponent,  this.isFinished() ? {} : {color: Styles.defaultColorScheme.mediumColor}]
         return (
             <Container
                 navigation={this.props.navigation}
-                finishComponent={ <Text style={finishComponentStyle}>{finishText}</Text> }
-                onFinish={() => this.isFinished() ? handleOnFinish(this.state) : {}}
+                finishComponent={ <Text style={finishComponentStyle}>{this.finishText}</Text> }
+                onFinish={() => this.isFinished() ? this.handleOnFinish(this.state) : {}}
                 titleElementOverride={
                     <View style={Styles.leftRightView}>
-                        <Text style={Styles.headerTitle}>{title}</Text>
+                        <Text style={Styles.headerTitle}>{this.title}</Text>
                         {this.getPublicInviteInput()}
                     </View>
                 }

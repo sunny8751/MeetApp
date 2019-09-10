@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
-    View,
     ViewPropTypes,
     StyleSheet,
 } from 'react-native';
-
-import { Avatar, Day, utils } from 'react-native-gifted-chat';
+import { View, Avatar } from './';
+import { Day, utils } from 'react-native-gifted-chat';
 import ChatBubble from './ChatBubble';
+import Button from './Button';
 
 const { isSameUser, isSameDay } = utils;
 
@@ -32,7 +32,7 @@ class ChatMessage extends React.Component {
             }
             return <Day {...dayProps} />;
         }
-        return null;
+        return null;    
     }
 
     renderBubble() {
@@ -54,12 +54,35 @@ class ChatMessage extends React.Component {
         }
 
         const avatarProps = this.getInnerComponentProps();
-        return (
-            <Avatar
-                {...avatarProps}
-                imageStyle={{ left: [styles.slackAvatar, avatarProps.imageStyle, extraStyle] }}
-            />
-        );
+        const {renderAvatarOnTop,
+            showAvatarForEveryMessage,
+            currentMessage,
+            previousMessage,
+            nextMessage,
+            onPressAvatar,
+        } = avatarProps;
+        const messageToCompare = renderAvatarOnTop ? previousMessage : nextMessage;
+        if (!showAvatarForEveryMessage &&
+            currentMessage &&
+            messageToCompare &&
+            isSameUser(currentMessage, messageToCompare) &&
+            isSameDay(currentMessage, messageToCompare)) {
+            return (<View style={{paddingRight: 48}}/>);
+        } else {
+            return (
+                <Button
+                    style={{marginRight: 8, alignSelf: 'flex-start'}}
+                    onPress={() => onPressAvatar(currentMessage.user._id)}
+                >
+                    <Avatar
+                        source={currentMessage.user.avatar}
+                        size={40}
+                        // {...avatarProps}
+                        // imageStyle={{ left: [styles.slackAvatar, avatarProps.imageStyle, extraStyle] }}
+                    />
+                </Button>
+            );
+        }
     }
 
     render() {

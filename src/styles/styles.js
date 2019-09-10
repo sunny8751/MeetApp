@@ -101,7 +101,7 @@ export const cardLocationText = {
 };
 
 export const addButton = {
-    bottom: 30,
+    bottom: 15,
     padding: 15,
     borderRadius: 50,
     alignSelf: 'center',
@@ -119,7 +119,8 @@ export const addButtonFloating = {
 export const headerView = {
     ...flex,
     padding: 15,
-    marginTop: Platform.OS === 'ios' ? 20 : 0,
+    // marginTop: Platform.OS === 'ios' ? 20 : 0,
+    paddingTop: 0
 };
 
 export const headerText = {

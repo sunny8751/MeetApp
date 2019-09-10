@@ -149,13 +149,14 @@ class Chat extends React.Component<ChatProps | any> {
                     name: firstName + ' ' + lastName,
                     avatar: avatar
                 }}
-                renderMessage={this.renderMessage}
+                // renderMessage={this.renderMessage}
                 listViewProps={{
                     keyboardShouldPersistTaps: 'handled',
                     keyboardDismissMode: 'on-drag',
                     onEndReached: this.handleLoadEarlier,
                     onEndReachedThreshold: 0,
                 }}
+                onPressAvatar={(user) => console.log('pressed avatar', user._id)}
             />
         );
     }

@@ -17,18 +17,22 @@ class InfoModal extends React.Component<InfoModalProps | any> {
         header: null,
     }
 
+    eventId: string;
+    colorScheme: any;
+
     constructor(props) {
         super(props);
         this.closeModal = this.closeModal.bind(this);
         this.deleteEvent = this.deleteEvent.bind(this);
         this.inviteFriends = this.inviteFriends.bind(this);
         this.editEvent = this.editEvent.bind(this);
+
+        ({ eventId: this.eventId, colorScheme: this.colorScheme } = this.props.navigation.state.params);
     }
 
     inviteFriends() {
-        const { eventId } = this.props.navigation.state.params;
         const { events } = this.props;
-        this.props.navigation.navigate('InviteFriends', { eventId: eventId, event: events[eventId] })
+        this.props.navigation.navigate('InviteFriends', { eventId: this.eventId, event: events[this.eventId] })
     }
 
     closeModal() {
@@ -36,11 +40,10 @@ class InfoModal extends React.Component<InfoModalProps | any> {
     }
 
     async deleteEvent() {
-        const { eventId } = this.props.navigation.state.params;
-        console.log('delete', eventId);
-        database.removeEvent(eventId); // don't await
+        console.log('delete', this.eventId);
+        database.removeEvent(this.eventId); // don't await
         // this.props.navigation.popToTop({immediate: true});
-        this.props.removeEvents([eventId]);
+        this.props.removeEvents([this.eventId]);
 
         const resetAction = StackActions.reset({
             index: 0,
@@ -51,18 +54,17 @@ class InfoModal extends React.Component<InfoModalProps | any> {
 
     editEvent() {
         const navigation = this.props.navigation;
-        const { eventId } = navigation.state.params;
 
         const saveEvent = (event) => {
             if (!event.name) { return; }
-            this.props.updateEvent(eventId, event);
-            database.updateEvent(eventId, event);
+            this.props.updateEvent(this.eventId, event);
+            database.updateEvent(this.eventId, event);
             // navigation.goBack();
             this.props.navigation.pop(1)
         };
 
         navigation.navigate('EditEvent', {
-            startEvent: this.props.events[eventId],
+            startEvent: this.props.events[this.eventId],
             title: "Edit Event",
             handleOnFinish: saveEvent,
             finishText: "Save",
@@ -71,32 +73,33 @@ class InfoModal extends React.Component<InfoModalProps | any> {
     }
 
     render() {
-        const { eventId, colorScheme } = this.props.navigation.state.params;
-        if (!this.props.events[eventId]) {
+        if (!this.props.events[this.eventId]) {
             return (<View />)
         }
         return (
             <Modal
                 title={"Info"}
                 handleClose={this.closeModal}
-                colorScheme={colorScheme}
+                colorScheme={this.colorScheme}
+                flexSize={0}
+                topFlexSize={1}
             >
                 
                 <Button onPress={this.editEvent}>
-                    <Card backgroundColor={colorScheme.mediumColor} style={{marginBottom: 20}}>
-                        <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Edit Event</Text>
+                    <Card backgroundColor={this.colorScheme.mediumColor} style={{marginBottom: 20}}>
+                        <Text style={[Styles.cardSubheaderText, {color: this.colorScheme.darkColor, textAlign: 'center'}]}>Edit Event</Text>
                     </Card>
                 </Button>
                 
                 <Button onPress={this.inviteFriends}>
-                    <Card backgroundColor={colorScheme.mediumColor} style={{marginBottom: 20}}>
-                        <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Invite Friends</Text>
+                    <Card backgroundColor={this.colorScheme.mediumColor} style={{marginBottom: 20}}>
+                        <Text style={[Styles.cardSubheaderText, {color: this.colorScheme.darkColor, textAlign: 'center'}]}>Invite Friends</Text>
                     </Card>
                 </Button>
 
                 <Button onPress={this.deleteEvent}>
-                    <Card backgroundColor={colorScheme.mediumColor} style={{marginBottom: 20}}>
-                        <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Delete Event</Text>
+                    <Card backgroundColor={this.colorScheme.mediumColor} style={{marginBottom: 20}}>
+                        <Text style={[Styles.cardSubheaderText, {color: this.colorScheme.darkColor, textAlign: 'center'}]}>Delete Event</Text>
                     </Card>
                 </Button>
 
