@@ -4,23 +4,18 @@ import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import _ from 'lodash';
 import moment from 'moment';
-import { addEvents, setEvents } from '../actions/Actions';
+// import { addEvent, setEvents } from '../actions/Actions';
 import EventsList from './EventsList';
-import { View, Button, Container, Avatar } from './UI';
+import { Text, View, Button, Container } from './UI';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import { getNextHour, getFormattedTimeString, getTimeElapsed } from '../utils/Utils';
+import { getNextHour, getFormattedTimeString, getTimeElapsed, getFriends } from '../utils/Utils';
 import database from '../database/Database';
 
 export interface MyEventsProps {
 
 }
 
-class MyEvents extends React.Component<MyEventsProps | any> {
-    static navigationOptions = {
-        // headerTitleStyle: Styles.headerTitleStyle
-        header: null
-    };
-    
+class MyEvents extends React.Component<MyEventsProps | any> {    
     constructor(props) {
         super(props);
         this.convertToSections = this.convertToSections.bind(this);
@@ -57,7 +52,8 @@ class MyEvents extends React.Component<MyEventsProps | any> {
     } 
 
     async refresh() {
-        this.props.setEvents(await database.getEvents(this.props.myId));
+        // this.props.setEvents(await database.getEvents(this.props.myId));
+        await database.getEvents(this.props.myId);
     }
 
     convertToSections(events) {
@@ -103,13 +99,18 @@ class MyEvents extends React.Component<MyEventsProps | any> {
         };
 
         const handleNext = (event) => {
+            console.log('handle next called');
             if (!event.name) { return; }
-            this.props.navigation.navigate('InviteFriends', {event});
+            this.props.navigation.navigate('InviteFriends', {
+                event, handleAfterFinish: () => {
+                    this.props.navigation.pop(2);
+                }
+            });
         };
 
         this.props.navigation.navigate('EditEvent', {
             startEvent: startEvent,
-            title: "Edit Event",
+            title: "Add Event",
             handleOnFinish: handleNext,
             finishText: "Next",
         })
@@ -140,6 +141,7 @@ class MyEvents extends React.Component<MyEventsProps | any> {
     // }
 
     render() {
+        console.log('My Events', this.props.state);
         return (
             <Container
                 title={'My Events'}
@@ -166,11 +168,22 @@ class MyEvents extends React.Component<MyEventsProps | any> {
                     </View>
                 }
             >
-                <EventsList
-                    sections={this.state['sections']}
-                    // onScroll={this.handleOnScroll}
-                    // scrollEventThrottle={300}
-                />
+                {this.state['sections'] === [] ? (
+                    <View style={{flex: 1, backgroundColor: 'red'}}>
+                        <Text
+                            style={[Styles.sectionTitle, {color: Styles.colors.lightGrey}]}
+                        >
+                            You have no events yet. Add a new event now.
+                        </Text>
+                    </View>
+                ) : (
+                    <EventsList
+                        sections={this.state['sections']}
+                        // onScroll={this.handleOnScroll}
+                        // scrollEventThrottle={300}
+                    />
+                )}
+                
                 {this.getAddButton()}
             </Container>
         );
@@ -181,13 +194,14 @@ const mapStateToProps = (state) => {
     return {
       events: state.events,
       myId: state.myId,
-      avatar: state.avatar
+      avatar: state.avatar,
+      state: state
     };
 };
 
 const mapDispatchToProps = {
-    addEvents,
-    setEvents
+    // addEvent,
+    // setEvents
 };
 
 export default connect(

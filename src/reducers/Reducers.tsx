@@ -35,31 +35,37 @@ const eventsReducer = (state, action) => {
     }
 
     switch (action.type) {
-        case Constants.ADD_EVENTS:
-            return {...state, ...action.events};
+        case Constants.ADD_EVENT:
+            return {...state, ...action.event};
         case Constants.REMOVE_EVENTS:
             return _.omit(state, action.eventIds);
         case Constants.SET_EVENTS:
             return {...action.events};
         case Constants.UPDATE_EVENT:
-            return {...state, [action.eventId]: {...state[action.eventId], ...action.event}}
+            const eventId = Object.keys(action.event)[0];
+            return {...state, [eventId]: {...state[eventId], ...action.event[eventId]}};
         default:
             return state;
     }
 };
 
-const friendsReducer = (state, action) => {
+const usersReducer = (state, action) => {
     if (typeof state === 'undefined') {
         return {};
     }
 
     switch (action.type) {
-        case Constants.ADD_FRIENDS:
-            return {...state, ...action.friends};
-        case Constants.REMOVE_FRIENDS:
-            return _.omit(state, action.friendIds);
-        case Constants.SET_FRIENDS:
-            return {...action.friends};
+        case Constants.ADD_USERS:
+            return {...state, ...action.users};
+        case Constants.REMOVE_USERS:
+            return _.omit(state, action.userIds);
+        case Constants.SET_USERS:
+            return {...action.users};
+        case Constants.UPDATE_USER:
+            const userId = Object.keys(action.user)[0];
+            console.log('userId', userId);
+            console.log(state[userId], {[userId]: {...state[userId], ...action.user[userId]}})
+            return {...state, [userId]: {...state[userId], ...action.user[userId]}};
         default:
             return state;
     }
@@ -141,10 +147,10 @@ const Reducers = {
     avatar: avatarReducer,
     myId: myIdReducer,
     events: eventsReducer,
-    friends: friendsReducer,
+    users: usersReducer,
     firstName: firstNameReducer,
     lastName: lastNameReducer,
-    messages: messagesReducer
+    messages: messagesReducer,
 };
 
 export default combineReducers<MyStore>(Reducers);

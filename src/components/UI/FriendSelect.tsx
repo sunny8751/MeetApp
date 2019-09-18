@@ -12,18 +12,19 @@ export interface FriendSelectProps {
     selected: boolean;
     selectedElement?: JSX.Element;
     unselectedElement?: JSX.Element;
+    style?: any;
 }
 
 class FriendSelect extends React.Component<FriendSelectProps | any> {
     render() {
-        const { user, onPress, selected, selectedElement, unselectedElement } = this.props;
+        const { style, user, onPress, selected, selectedElement, unselectedElement } = this.props;
         const { firstName, lastName, avatar } = user;
         const name = firstName + ' ' + lastName;
         return (
             <Button onPress={onPress} disableAnimate>
-                <Card backgroundColor={Styles.defaultColorScheme.lightColor} style={Styles.horizontalLayout}>
+                <Card backgroundColor={Styles.defaultColorScheme.lightColor} style={[Styles.horizontalLayout, style]}>
                     <View style={[Styles.center, {paddingRight: 10}]}>
-                        <Avatar size={40} source={avatar} />
+                        <Avatar size={40} user={user} backgroundColor={"white"}/>
                     </View>
                     <View style={[Styles.flex, {marginTop: "auto", marginBottom: "auto"}]}>
                         <Text style={[Styles.cardHeaderText, {color: Styles.defaultColorScheme.darkColor}]}>{name}</Text>

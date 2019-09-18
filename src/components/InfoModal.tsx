@@ -3,7 +3,7 @@ import * as Styles from '../styles/styles';
 import { connect } from 'react-redux';
 import { withNavigation, StackActions, NavigationActions } from 'react-navigation';
 import { Ionicons } from '@expo/vector-icons';
-import { removeEvents, updateEvent } from '../actions/Actions';
+// import { removeEvents, updateEvent } from '../actions/Actions';
 import { getTimeColor, getTimeString } from '../utils/Utils';
 import { Card, Modal, View, Text, Header, Button } from './UI';
 import database from '../database/Database';
@@ -13,10 +13,6 @@ export interface InfoModalProps {
 }
 
 class InfoModal extends React.Component<InfoModalProps | any> {
-    static navigationOptions = {
-        header: null,
-    }
-
     eventId: string;
     colorScheme: any;
 
@@ -32,7 +28,8 @@ class InfoModal extends React.Component<InfoModalProps | any> {
 
     inviteFriends() {
         const { events } = this.props;
-        this.props.navigation.navigate('InviteFriends', { eventId: this.eventId, event: events[this.eventId] })
+        this.props.navigation.pop(1);
+        this.props.navigation.navigate('InviteFriends', { eventId: this.eventId, event: events[this.eventId], handleAfterFinish: () => this.props.navigation.pop(1) });
     }
 
     closeModal() {
@@ -43,7 +40,7 @@ class InfoModal extends React.Component<InfoModalProps | any> {
         console.log('delete', this.eventId);
         database.removeEvent(this.eventId); // don't await
         // this.props.navigation.popToTop({immediate: true});
-        this.props.removeEvents([this.eventId]);
+        // this.props.removeEvents([this.eventId]);
 
         const resetAction = StackActions.reset({
             index: 0,
@@ -57,7 +54,7 @@ class InfoModal extends React.Component<InfoModalProps | any> {
 
         const saveEvent = (event) => {
             if (!event.name) { return; }
-            this.props.updateEvent(this.eventId, event);
+            // this.props.updateEvent({[this.eventId]: event});
             database.updateEvent(this.eventId, event);
             // navigation.goBack();
             this.props.navigation.pop(1)
@@ -86,19 +83,19 @@ class InfoModal extends React.Component<InfoModalProps | any> {
             >
                 
                 <Button onPress={this.editEvent}>
-                    <Card backgroundColor={this.colorScheme.mediumColor} style={{marginBottom: 20}}>
+                    <Card backgroundColor={this.colorScheme.lightColor} style={{marginBottom: 20}}>
                         <Text style={[Styles.cardSubheaderText, {color: this.colorScheme.darkColor, textAlign: 'center'}]}>Edit Event</Text>
                     </Card>
                 </Button>
                 
                 <Button onPress={this.inviteFriends}>
-                    <Card backgroundColor={this.colorScheme.mediumColor} style={{marginBottom: 20}}>
+                    <Card backgroundColor={this.colorScheme.lightColor} style={{marginBottom: 20}}>
                         <Text style={[Styles.cardSubheaderText, {color: this.colorScheme.darkColor, textAlign: 'center'}]}>Invite Friends</Text>
                     </Card>
                 </Button>
 
                 <Button onPress={this.deleteEvent}>
-                    <Card backgroundColor={this.colorScheme.mediumColor} style={{marginBottom: 20}}>
+                    <Card backgroundColor={this.colorScheme.lightColor} style={{marginBottom: 20}}>
                         <Text style={[Styles.cardSubheaderText, {color: this.colorScheme.darkColor, textAlign: 'center'}]}>Delete Event</Text>
                     </Card>
                 </Button>
@@ -115,7 +112,7 @@ const mapStateToProps = (state) => {
 };
   
 const mapDispatchToProps = {
-    removeEvents, updateEvent
+    // removeEvents, updateEvent
 };
   
 export default connect(

@@ -3,7 +3,8 @@ import * as Styles from '../styles/styles';
 import { connect } from 'react-redux';
 import { withNavigation, StackActions, NavigationActions } from 'react-navigation';
 import { AntDesign, Entypo } from '@expo/vector-icons';
-import { setFriends, setEvents, setMyId, setFirstName, setLastName, setAvatar } from '../actions/Actions';
+import { setMyId } from '../actions/Actions';
+// import { setFriends, setEvents, setMyId, setFirstName, setLastName, setAvatar } from '../actions/Actions';
 import { getTimeColor, getTimeString } from '../utils/Utils';
 import { TextInputCard, Card, Container, View, Text, Header, Button, ScrollView } from './UI';
 import database from '../database/Database';
@@ -15,7 +16,7 @@ export interface LoginProps {
 class Login extends React.Component<LoginProps | any> {
     static navigationOptions = {
         header: null,
-    }
+    };
 
     constructor(props) {
         super(props);
@@ -23,50 +24,55 @@ class Login extends React.Component<LoginProps | any> {
         this.createAccount = this.createAccount.bind(this);
         this.forgotPassword = this.forgotPassword.bind(this);
         this.populateLogin = this.populateLogin.bind(this);
+        this.isFinished = this.isFinished.bind(this);
+
         this.state = {
             username: '',
             password: ''
         };
     }
 
-    // async componentDidMount() {
-    //     const userId = 'sunny8751@gmail.com';
-    //     const { setMyId, setFirstName, setLastName, setAvatar, setFriends, setEvents } = this.props;
-    //     const { firstName, lastName, avatar, friendIds, events } = await database.getUser(userId);
-    //         setMyId(userId);
-    //         setFirstName(firstName);
-    //         setLastName(lastName);
-    //         setAvatar(avatar);
-    //         setFriends(await database.getFriends(userId));
-    //         setEvents(await database.getEvents(userId));
-
-    //         const resetAction = StackActions.reset({
-    //             index: 0,
-    //             actions: [NavigationActions.navigate({ routeName: 'Main', action: NavigationActions.navigate({ routeName: 'MyEvents' }) })],
-    //         });
-    //         this.props.navigation.dispatch(resetAction);
-    // }
+    async componentDidMount() {
+    }
 
     populateLogin(username, password) {
         this.setState({
             username: username,
             password: password
+        }, () => {
+            this.login();
         });
-        this.login(username, password);
     }
 
-    async login(username, password) {
+    isFinished(showAlert=false) {
+        const { username, password } = this.state;
+        if (!username || !password) {
+            if (showAlert) {
+                alert('Please fill in all fields');
+            }
+            return false;
+        }
+        return true;
+    }
+
+    async login() {
         console.log('login');
-        const { setMyId, setFirstName, setLastName, setAvatar, setFriends, setEvents } = this.props;
+        if (!this.isFinished(true)) {
+            return;
+        }
+        const { username, password } = this.state;
+        const { setMyId } = this.props; //setFirstName, setLastName, setAvatar, setFriends, setEvents
         try {
             const userId = await database.loginWithEmail(username, password);
-            const { firstName, lastName, avatar } = await database.getUser(userId);
             setMyId(userId);
-            setFirstName(firstName);
-            setLastName(lastName);
-            setAvatar(avatar);
-            setFriends(await database.getFriends(userId));
-            setEvents(await database.getEvents(userId));
+            const { firstName, lastName, avatar } = await database.getUser(userId);
+            // setFirstName(firstName);
+            // setLastName(lastName);
+            // setAvatar(avatar);
+            await database.getEvents(userId);
+            await database.getFriends(userId);
+            // setFriends(await database.getFriends(userId));
+            // setEvents(await database.getEvents(userId));
 
             const resetAction = StackActions.reset({
                 index: 0,
@@ -87,6 +93,8 @@ class Login extends React.Component<LoginProps | any> {
 
     forgotPassword() {
         console.log('forgotPassword');
+        const { username } = this.state;
+        this.props.navigation.navigate('ForgotPassword', {username})
     }
 
     render() {
@@ -96,11 +104,13 @@ class Login extends React.Component<LoginProps | any> {
         return (
             <Container
                 navigation={this.props.navigation}
-                style={[Styles.verticalCenter, Styles.headerView, {paddingTop: 100}]}
+                style={[Styles.verticalCenter, Styles.headerView]}
+                keyboardBehavior={"position"}
+                disableSafeAreaView
             >
                 <ScrollView>
                     <View style={Styles.horizontalCenter}>
-                        <Entypo name={"calendar"} size={150} style={{color: Styles.colors.green}} />
+                        <Entypo name={"calendar"} size={150} style={{color: Styles.colors.green, paddingTop: 100}} />
                         <Text style={Styles.logoText}>MeetApp</Text>
                     </View>
                     <TextInputCard
@@ -126,9 +136,9 @@ class Login extends React.Component<LoginProps | any> {
                         colorScheme={colorScheme}
                         autoCapitalize={"none"}
                     />
-                    <Button onPress={()=>this.login(this.state.username, this.state.password)}>
+                    <Button onPress={this.isFinished() ? this.login: () => {}}>
                         <Card backgroundColor={colorScheme.lightColor} style={{marginBottom: 20}}>
-                            <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Login</Text>
+                            <Text style={[Styles.cardSubheaderText, {color: this.isFinished() ? colorScheme.darkColor : Styles.colors.grey, textAlign: 'center'}]}>Login</Text>
                         </Card>
                     </Button>
                     <View style={[Styles.leftRightView, Styles.horizontalCenter]}>
@@ -156,11 +166,11 @@ const mapStateToProps = (state) => {
   
 const mapDispatchToProps = {
     setMyId,
-    setFirstName,
-    setLastName,
-    setAvatar,
-    setFriends,
-    setEvents
+    // setFirstName,
+    // setLastName,
+    // setAvatar,
+    // setFriends,
+    // setEvents
 };
   
 export default connect(

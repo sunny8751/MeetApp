@@ -119,8 +119,8 @@ export const addButtonFloating = {
 export const headerView = {
     ...flex,
     padding: 15,
-    // marginTop: Platform.OS === 'ios' ? 20 : 0,
-    paddingTop: 0
+    // marginTop: Platform.OS === 'ios' ? 40 : 0,
+    paddingTop: 0,
 };
 
 export const headerText = {
@@ -172,6 +172,14 @@ export const fullscreenAbsolute = {
     bottom: 0,
     right: 0
 };
+
+export const modal = {
+    ...fullscreenAbsolute,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    backgroundColor: 'transparent'
+}
 
 export {
     colors,

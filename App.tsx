@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, Easing, Animated } from 'react-native';
 import { Provider } from 'react-redux';
 import { createAppContainer, createStackNavigator, SafeAreaView } from 'react-navigation';
 import { createStore } from 'redux';
@@ -14,6 +14,9 @@ import EditProfile from './src/components/EditProfile';
 import AddFriends from './src/components/AddFriends';
 import EditEvent from './src/components/EditEvent';
 import ProfileModal from './src/components/ProfileModal';
+import InvitedList from './src/components/InvitedList';
+import InviteModal from './src/components/InviteModal';
+import ForgotPassword from './src/components/ForgotPassword';
 
 export interface MyStore {
     count: number;
@@ -21,7 +24,9 @@ export interface MyStore {
 
 const store = createStore<MyStore>(Reducers);
 
-const fade = (props) => {
+export { store };
+
+const rightTransition = (props) => {
     const {position, layout, scene} = props
     const index = scene.index;
     const width = layout.initWidth;
@@ -41,6 +46,26 @@ const fade = (props) => {
     }
 }
 
+const modalTransition = (props) => {
+    const {position, layout, scene} = props
+    const index = scene.index;
+    const width = layout.initWidth;
+    const height = layout.initHeight;
+    const translateX = 0;
+    const translateY = position.interpolate({
+        inputRange: [index - 1, index, index + 1],
+        outputRange: [height, 0, 0]
+    });
+    const opacity = position.interpolate({
+        inputRange: [index - 1, index, index + 1],
+        outputRange: [1, 1, 0.4]
+    });
+    return {
+        opacity,
+        transform: [{translateX}, {translateY}]
+    }
+}
+
 const MainStack = createStackNavigator(
     {
         Login: Login,
@@ -51,14 +76,17 @@ const MainStack = createStackNavigator(
         EventOverview: EventOverview,
         EditEvent: EditEvent,
         InviteFriends: InviteFriends,
+        InvitedList: InvitedList,
+        ForgotPassword: ForgotPassword,
     },
     {
         // initialRouteName: 'Login',
         transitionConfig: () => ({
             screenInterpolator: (props) => {
-                return fade(props);
+                return rightTransition(props);
             }
-        })
+        }),
+        headerMode: 'none',
     }
 );
 
@@ -72,27 +100,61 @@ const RootStack = createStackNavigator(
       },
       ProfileModal: {
           screen: ProfileModal
+      },
+      InviteModal: {
+          screen: InviteModal
       }
     },
     {
         mode: 'modal',
         headerMode: 'none',
-        cardStyle: { opacity: 1 },
+        // cardStyle: { opacity: 1 },
         transparentCard: true,
+        transitionConfig: () => ({
+            screenInterpolator: (props) => {
+                return modalTransition(props);
+            },
+        })
+
+        // transitionConfig: () => ({
+        //     transitionSpec: {
+        //     duration: 750,
+        //     easing: Easing.out(Easing.poly(4)),
+        //     timing: Animated.timing,
+        //     useNativeDriver: true,
+        //     },
+        //     screenInterpolator: sceneProps => {
+        //     const { layout, position, scene } = sceneProps;
+        //     const thisSceneIndex = scene.index;
+        
+        //     const height = layout.initHeight;
+        //     const translateY = position.interpolate({
+        //         inputRange: [thisSceneIndex - 1, thisSceneIndex, thisSceneIndex + 1],
+        //         outputRange: [height, 0, 0],
+        //     });
+        
+        //     const opacity = position.interpolate({
+        //         inputRange: [thisSceneIndex - 1, thisSceneIndex, thisSceneIndex + 1],
+        //         outputRange: [1, 1, 0.5],
+        //     });
+        
+        //     return { opacity, transform: [{ translateY }] };
+        //     },
+        // }),
+
     }
   );
 
 const Navigation = createAppContainer(RootStack);
 
+console.disableYellowBox = true;
+
 export default class App extends React.Component {
     render() {
         return (
-            <SafeAreaView style={{flex: 1}}>
-                <Provider store={store}>
-                    <Navigation />
-                </Provider>
-            </SafeAreaView>
-            
+            <Provider store={store}>
+                <Navigation />
+            </Provider>
         );
     }
 }

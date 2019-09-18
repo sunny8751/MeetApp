@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withNavigation, StackActions, NavigationActions } from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import * as Constants from './../constants/Constants';
-import { setFriends, setEvents, setMyId, setFirstName, setLastName, setAvatar } from '../actions/Actions';
+// import { setFriends, setEvents, setMyId, setFirstName, setLastName, setAvatar } from '../actions/Actions';
 import { addAvatar } from '../utils/Utils';
 import { Avatar, TextInputCard, Card, Container, View, Text, Header, Button, ScrollView, Chat } from './UI';
 import database from '../database/Database';
@@ -13,23 +13,18 @@ export interface CreateAccountProps {
 }
 
 class CreateAccount extends React.Component<CreateAccountProps | any> {
-    static navigationOptions = {
-        header: null,
-    }
-
     constructor(props) {
         super(props);
         this.createAccount = this.createAccount.bind(this);
         this.isFinished = this.isFinished.bind(this);
 
-        const { firstName, lastName, avatar } = this.props;
         this.state = {
-            firstName: firstName,
-            lastName: lastName,
+            firstName: '',
+            lastName: '',
             username: this.props.navigation.getParam('username', ''),
             password: '',
             passwordConfirmation: '',
-            avatar: avatar,
+            avatar: '',
         };
     }
 
@@ -59,14 +54,18 @@ class CreateAccount extends React.Component<CreateAccountProps | any> {
     //       });
     // }
 
-    isFinished() {
+    isFinished(showAlert=false) {
         const { firstName, lastName, username, password, passwordConfirmation, isUsernameLocked } = this.state;
         if (!firstName || !lastName || !username || (!isUsernameLocked && (!password || !passwordConfirmation))) {
-            alert('Please fill in all fields');
+            if (showAlert) {
+                alert('Please fill in all fields');
+            }
             return false;
         }
         if (password !== passwordConfirmation) {
-            alert('Passwords do not match');
+            if (showAlert) {
+                alert('Passwords do not match');
+            }
             return false;
         }
         return true;
@@ -74,11 +73,11 @@ class CreateAccount extends React.Component<CreateAccountProps | any> {
 
     async createAccount() {
         console.log('createAccount');
-        if (!this.isFinished()) {
+        if (!this.isFinished(true)) {
             return;
         }
         const { avatar: avatarFile, firstName, lastName, username, password } = this.state;
-        const { setMyId, setFirstName, setLastName, setAvatar, setFriends, setEvents } = this.props;
+        // const { setMyId, setFirstName, setLastName, setAvatar, setFriends, setEvents } = this.props;
         try {
             const userId = await database.createAccount(username, password);
             const avatar = (avatarFile === Constants.DEFAULT_AVATAR) ? avatarFile : await database.uploadProfilePicture(avatarFile, userId);
@@ -88,12 +87,12 @@ class CreateAccount extends React.Component<CreateAccountProps | any> {
                 lastName,
                 avatar,
             }, friends);
-            setMyId(userId);
-            setFirstName(firstName);
-            setLastName(lastName);
-            setAvatar(avatar);
-            setFriends([]);
-            setEvents([]);
+            // setMyId(userId);
+            // setFirstName(firstName);
+            // setLastName(lastName);
+            // setAvatar(avatar);
+            // setFriends([]);
+            // setEvents([]);
         } catch(err) {
             alert(err);
             return;
@@ -120,7 +119,8 @@ class CreateAccount extends React.Component<CreateAccountProps | any> {
                             onPress={() => {addAvatar((avatar) => { this.setState({ avatar }); })}}
                         >
                             <Avatar
-                                source={this.state.avatar}
+                                // source={this.state.avatar}
+                                user={this.state}
                                 size={80}
                             />
                         </Button>
@@ -182,9 +182,9 @@ class CreateAccount extends React.Component<CreateAccountProps | any> {
                         colorScheme={colorScheme}
                         autoCapitalize={"none"}
                     />
-                    <Button onPress={this.createAccount}>
+                    <Button onPress={this.isFinished() ? this.createAccount : ()=>{}}>
                         <Card backgroundColor={colorScheme.lightColor} style={{marginBottom: 20}}>
-                            <Text style={[Styles.cardSubheaderText, {color: colorScheme.darkColor, textAlign: 'center'}]}>Create Account</Text>
+                            <Text style={[Styles.cardSubheaderText, {color: this.isFinished() ? colorScheme.darkColor : Styles.colors.grey, textAlign: 'center'}]}>Create Account</Text>
                         </Card>
                     </Button>
                 </ScrollView>
@@ -202,12 +202,12 @@ const mapStateToProps = (state) => {
 };
   
 const mapDispatchToProps = {
-    setMyId,
-    setFirstName,
-    setLastName,
-    setAvatar,
-    setFriends,
-    setEvents
+    // setMyId,
+    // setFirstName,
+    // setLastName,
+    // setAvatar,
+    // setFriends,
+    // setEvents
 };
   
 export default connect(

@@ -15,6 +15,7 @@ import FriendSelect from './FriendSelect';
 import Avatar from './Avatar';
 import Modal from './Modal';
 import StackedAvatar from './StackedAvatar';
+import Image from './Image';
 import { SectionList } from 'react-native';
 
 export {
@@ -35,5 +36,6 @@ export {
     FriendSelect,
     Avatar,
     Modal,
-    StackedAvatar
+    StackedAvatar,
+    Image
 };

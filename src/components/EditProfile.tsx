@@ -5,7 +5,7 @@ import ImagePicker from 'react-native-image-picker';
 import { withNavigation, StackActions, NavigationActions } from 'react-navigation';
 import { AntDesign } from '@expo/vector-icons';
 import * as Constants from './../constants/Constants';
-import { setFriends, setEvents, setMyId, setFirstName, setLastName, setAvatar } from '../actions/Actions';
+// import { setFriends, setEvents, setMyId, setFirstName, setLastName, setAvatar } from '../actions/Actions';
 import { Avatar, TextInputCard, Card, Container, View, Text, Header, Button, ScrollView, Chat } from './UI';
 import { addAvatar } from '../utils/Utils';
 import database from '../database/Database';
@@ -14,10 +14,6 @@ export interface EditProfileProps {
 }
 
 class EditProfile extends React.Component<EditProfileProps | any> {
-    static navigationOptions = {
-        header: null,
-    }
-
     constructor(props) {
         super(props);
         this.saveChanges = this.saveChanges.bind(this);
@@ -91,12 +87,12 @@ class EditProfile extends React.Component<EditProfileProps | any> {
 
     async logout() {
         await database.logout();
-        setMyId('');
-        setFirstName('');
-        setLastName('');
-        setAvatar('');
-        setFriends({});
-        setEvents({});
+        // setMyId('');
+        // setFirstName('');
+        // setLastName('');
+        // setAvatar('');
+        // setFriends({});
+        // setEvents({});
 
         const resetAction = StackActions.reset({
             index: 0,
@@ -110,17 +106,17 @@ class EditProfile extends React.Component<EditProfileProps | any> {
             return;
         }
         const { avatar: avatarFile, firstName, lastName, username, password } = this.state;
-        const { myId, setMyId, setFirstName, setLastName, setAvatar, setFriends, setEvents } = this.props;
+        const { myId } = this.props; // setMyId, setFirstName, setLastName, setAvatar, setFriends, setEvents
         try {
-            const avatar = (avatarFile === Constants.DEFAULT_AVATAR) ? avatarFile : await database.uploadProfilePicture(avatarFile, myId);
+            const avatar = (avatarFile === this.props.avatar) ? avatarFile : await database.uploadProfilePicture(avatarFile, myId);
             await database.updateUser(myId, {
                 firstName,
                 lastName,
                 avatar
             });
-            setFirstName(firstName);
-            setLastName(lastName);
-            setAvatar(avatar);
+            // setFirstName(firstName);
+            // setLastName(lastName);
+            // setAvatar(avatar);
             if (password) {
                 await database.updatePassword(password);
             }
@@ -176,7 +172,7 @@ class EditProfile extends React.Component<EditProfileProps | any> {
                             onPress={() => {addAvatar((avatar) => { this.setState({ avatar }); })}}
                         >
                             <Avatar
-                                source={avatar}
+                                user={this.state}
                                 size={100}
                             />
                         </Button>
@@ -281,12 +277,12 @@ const mapStateToProps = (state) => {
 };
   
 const mapDispatchToProps = {
-    setMyId,
-    setFirstName,
-    setLastName,
-    setAvatar,
-    setFriends,
-    setEvents
+    // setMyId,
+    // setFirstName,
+    // setLastName,
+    // setAvatar,
+    // setFriends,
+    // setEvents
 };
   
 export default connect(

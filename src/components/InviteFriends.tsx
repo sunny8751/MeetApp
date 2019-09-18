@@ -2,9 +2,11 @@ import * as React from 'react';
 import * as Styles from '../styles/styles';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
-import { addEvents } from '../actions/Actions';
+import { AntDesign } from '@expo/vector-icons';
+// import { addEvent } from '../actions/Actions';
 import { Card, Container, View, Text, Header, Button, ScrollView, TextInput, FriendSelect } from './UI';
 import database from '../database/Database';
+import { getFriends, isMe } from '../utils/Utils';
 
 // const users = {
 //     1: {
@@ -20,16 +22,15 @@ import database from '../database/Database';
 // navigation parameters: event, eventId
 
 export interface InviteFriendsProp {
-    newEvent?: boolean;
 }
 
 class InviteFriends extends React.Component<InviteFriendsProp | any> {
-    static navigationOptions = {
-        header: null,
-    }
-
     event: any;
     eventId: string;
+    handleAfterFinish: () => {};
+    colorScheme: any;
+
+    _isMounted = false;
     
     constructor(props) {
         super(props);
@@ -37,14 +38,27 @@ class InviteFriends extends React.Component<InviteFriendsProp | any> {
         this.handleOnFinish = this.handleOnFinish.bind(this);
         this.handleChangeText = this.handleChangeText.bind(this);
         this.getFriendSuggestions = this.getFriendSuggestions.bind(this);
-        this.handleSelectFriend = this.handleSelectFriend.bind(this);
+        this.selectFriend = this.selectFriend.bind(this);
+        this.addInvite = this.addInvite.bind(this);
+        this.removeInvite = this.removeInvite.bind(this);
+        this.updateFriendSuggestions = this.updateFriendSuggestions.bind(this);
 
-        ({ event: this.event, eventId: this.eventId } = this.props.navigation.state.params);
+        ({ event: this.event, eventId: this.eventId, handleAfterFinish: this.handleAfterFinish } = this.props.navigation.state.params);
         this.state = {
             invited: this.event && this.event.invited ? this.event.invited : [],
             searchText: '',
+            suggestions: {}
         };
-        console.log('beginning invited', this.event && this.event.invited ? this.event.invited : []);
+        this.colorScheme = Styles.defaultColorScheme;
+    }
+
+    componentDidMount() {
+        this._isMounted = true;
+        this.updateFriendSuggestions(undefined);
+    }
+    
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     isFinished() {
@@ -57,67 +71,129 @@ class InviteFriends extends React.Component<InviteFriendsProp | any> {
         if (!this.isFinished()) { return; }
         console.log("Add event");
         const originalEventId = this.eventId;
-        const originalEvent = this.event;
-        const { myId } = this.props;
-        const event = {
-            ...(originalEvent || {}),
-            invited: this.state.invited
-        };
-        const eventId = originalEventId ? originalEventId : await database.addEvent(event);
-        await database.removeFriendInvites(eventId, originalEvent.invited.filter(friendId => event.invited.indexOf(friendId) === -1));
-        if (!originalEventId) {
-            console.log('adding myself', originalEventId)
-            await database.addFriendInvite(eventId, myId);
-        }
-        for (const friendId of event.invited) {
-            if (originalEvent.invited.indexOf(friendId) === -1) {
-                await database.addFriendInvite(eventId, friendId);
-            }
-        }
+        // const originalEvent = this.event;
+        // const { myId } = this.props;
+        // const event = {
+        //     ...(originalEvent || {}),
+        //     invited: this.state.invited
+        // };
+        const eventId = originalEventId ? originalEventId : await database.addEvent({
+            ...this.event,
+            invited: []
+        });
+        // await database.removeFriendInvites(eventId, originalEvent.invited.filter(friendId => event.invited.indexOf(friendId) === -1));
+        // if (!originalEventId) {
+        //     console.log('adding myself', originalEventId)
+        //     await database.addFriendInvite(eventId, myId);
+        // }
+        // for (const friendId of event.invited) {
+        //     if (originalEvent.invited.indexOf(friendId) === -1) {
+        //         await database.addFriendInvite(eventId, friendId);
+        //     }
+        // }
+        await database.updateFriendInvites(eventId, this.state.invited);
         // for (const friendId of originalEvent.invited) {
         //     if (!(friendId in event.invited)) {
         //         await database.removeFriendInvite(eventId, friendId);
         //     }
         // }
-        this.props.addEvents({ [eventId]: event });
-        this.props.navigation.popToTop({immediate: true});
+        // this.props.addEvents({ [eventId]: event });
+        // this.props.navigation.popToTop({immediate: true});
+        // this.props.navigation.pop(1);
+        if (this.handleAfterFinish) {
+            this.handleAfterFinish();
+        }
     }
 
     handleChangeText(text) {
         this.setState({searchText: text});
+        this.updateFriendSuggestions(text);
     }
 
-
-    handleSelectFriend(friendId: string, selected: boolean) {
+    addInvite(friendId: string) {
         this.setState((prevState) => {
-            let invited = prevState['invited'];
-            if(selected) {
-                return {
-                    invited: invited.filter(i => i != friendId)
-                }
-            } else {
-                return {
-                    // invited: { ...prevState['invited'], friend: true }
-                    invited: invited.concat(friendId)
-                }
+            return {
+                // invited: { ...prevState['invited'], friend: true }
+                invited: prevState['invited'].concat(friendId)
             }
         });
     };
 
-    getFriendSuggestions() {
-        const suggestionIds = Object.keys(this.props.friends).sort();
+    removeInvite(friendId: string) {
+        this.setState((prevState) => {
+            return {
+                invited: prevState['invited'].filter(i => i != friendId)
+            }
+        });
+    };
 
+    selectFriend(friendId) {
+        console.log('select', friendId);
+        const friend = this.props.users[friendId]; // TODO may not be friend
+        this.props.navigation.navigate('ProfileModal', {userId: friendId, user: friend, colorScheme: this.colorScheme});
+    }
+
+    async updateFriendSuggestions(friendId) {
+        let suggestions;
+        if (friendId) {
+            const friend = await database.getUser(friendId);
+            if (!friend || isMe(friendId)) {
+                // no results for friendId
+                return;
+            }
+            suggestions = {
+                [friendId]: friend
+            }
+        } else {
+            // auto recommendations
+            const friends = getFriends();
+            if (this.eventId) {
+                const invited = this.state.invited;
+                const users = this.props.users;
+                suggestions = invited.concat(Object.keys(friends)).filter(id => !isMe(id)).reduce(function(suggestions, id) {
+                    suggestions[id] = users[id];
+                    return suggestions;
+                }, {});
+            } else {
+                suggestions = friends;
+            }
+        }
+        if (this._isMounted) { // && friendId === this.state.searchText
+            this.setState({
+                suggestions: suggestions
+            });
+        }
+    }
+
+    getFriendSuggestions() {
+        const { suggestions, invited } = this.state;
         return (
-            suggestionIds.map((friendId: string) => {
+            Object.keys(suggestions).sort().map((friendId: string) => {
                 // TODO: use user id instead
-                const selected = this.state['invited'].indexOf(friendId) !== -1;
-                const friend = this.props.friends[friendId];
+                const friend = suggestions[friendId];
+                const selected = invited.indexOf(friendId) !== -1;
                 return (
                     <FriendSelect
                         user={friend}
-                        onPress={() => this.handleSelectFriend(friendId, selected)}
+                        onPress={() => this.selectFriend(friendId)}
                         selected={selected}
                         key={friendId}
+                        selectedElement={
+                            <Button onPress={() => this.removeInvite(friendId)}  style={Styles.center}>
+                                <Card style={[Styles.headerButton, Styles.horizontalLayout, {padding: 10, marginBottom: 0, marginRight: 0, marginLeft: 0, backgroundColor: Styles.colors.red}]}>
+                                    <AntDesign name="deleteuser" size={20} style={{ paddingRight: 4 }}/>
+                                    <Text style={[Styles.cardSubheaderText, {color: this.colorScheme.darkColor}]}>Remove</Text>
+                                </Card>
+                            </Button>
+                        }
+                        unselectedElement={
+                            <Button onPress={() => this.addInvite(friendId)}  style={Styles.center}>
+                                <Card style={[Styles.headerButton, Styles.horizontalLayout, {padding: 10, marginBottom: 0, marginRight: 0, marginLeft: 0, backgroundColor: Styles.colors.green}]}>
+                                    <AntDesign name="adduser" size={20} style={{ paddingRight: 4 }}/>
+                                    <Text style={[Styles.cardSubheaderText, {color: this.colorScheme.darkColor}]}>Add</Text>
+                                </Card>
+                            </Button>
+                        }
                     />);
             })
         );
@@ -139,6 +215,7 @@ class InviteFriends extends React.Component<InviteFriendsProp | any> {
                         onChangeText={this.handleChangeText}
                         value={this.state.searchText}
                         placeholder={"Type to search..."}
+                        placeholderTextColor={Styles.colors.grey}
                         autoCapitalize={"none"}
                     />
                 </View>
@@ -154,13 +231,13 @@ class InviteFriends extends React.Component<InviteFriendsProp | any> {
 const mapStateToProps = (state) => {
     return {
         myId: state.myId,
-        friends: state.friends,
+        users: state.users,
         events: state.events
     };
 };
 
 const mapDispatchToProps = {
-    addEvents,
+    // addEvent,
     // setEvents
 };
   

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withNavigation, StackActions, NavigationActions } from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
 import * as Constants from './../constants/Constants';
-import { setFriends, setEvents, setMyId, setFirstName, setLastName, setAvatar } from '../actions/Actions';
+// import { setFriends, setEvents, setMyId, setFirstName, setLastName, setAvatar } from '../actions/Actions';
 import { getTimeColor, getTimeString } from '../utils/Utils';
 import { Avatar, TextInputCard, Card, Container, View, Text, Header, Button, ScrollView, Chat } from './UI';
 
@@ -19,10 +19,6 @@ export interface ProfileProps {
 }
 
 class Profile extends React.Component<ProfileProps | any> {
-    static navigationOptions = {
-        header: null,
-    }
-
     static defaultProps = {
         username: ''
     }
@@ -84,7 +80,7 @@ class Profile extends React.Component<ProfileProps | any> {
     }
 
     async saveChanges() {
-        console.log('createAccount');
+        console.log('save profile changes');
         const { avatar: avatarFile, firstName, lastName, username, password } = this.state;
         if (!this.isFinished()) {
             return;
@@ -111,7 +107,7 @@ class Profile extends React.Component<ProfileProps | any> {
                             onPress={this.addAvatar}
                         >
                             <Avatar
-                                source={this.state.avatar}
+                                user={this.state}
                                 size={80}
                             />
                         </Button>
@@ -200,12 +196,12 @@ const mapStateToProps = (state) => {
 };
   
 const mapDispatchToProps = {
-    setMyId,
-    setFirstName,
-    setLastName,
-    setAvatar,
-    setFriends,
-    setEvents
+    // setMyId,
+    // setFirstName,
+    // setLastName,
+    // setAvatar,
+    // setFriends,
+    // setEvents
 };
   
 export default connect(

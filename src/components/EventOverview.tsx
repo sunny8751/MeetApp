@@ -3,9 +3,9 @@ import * as Styles from '../styles/styles';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import { Ionicons } from '@expo/vector-icons';
-import { removeEvents } from '../actions/Actions';
+// import { removeEvents } from '../actions/Actions';
 import { getTimeColor, getTimeString } from '../utils/Utils';
-import { Card, Container, View, Text, Header, Button, ScrollView, Chat, Avatar, StackedAvatar } from './UI';
+import { Card, Container, View, Text, Header, Button, ScrollView, Chat, StackedAvatar } from './UI';
 import database from '../database/Database';
 
 export interface EventOverviewProps {
@@ -13,27 +13,24 @@ export interface EventOverviewProps {
 }
 
 class EventOverview extends React.Component<EventOverviewProps | any> {
-    static navigationOptions = {
-        // title: navigation.getParam('name', 'Event Overview'),
-        // headerStyle: Styles.headerStyle,
-        // headerTitleStyle: Styles.headerTitleStyle,
-        // return {
-        //     header: (props) => <Header title={} />
-        // };
-        header: null,
-        // headerLeft: <Button onPress={() => console.log('click')}><Text>{"Hello"}</Text></Button>
-    }
-
     eventId: string;
     colorScheme: any;
 
     constructor(props) {
         super(props);
         this.openInfoModal = this.openInfoModal.bind(this);
+        this.openInviteModal = this.openInviteModal.bind(this);
+
         this.state = {
             refresh: false
         };
         ({ eventId: this.eventId, colorScheme: this.colorScheme } = this.props.navigation.state.params);
+    }
+
+    openInviteModal() {
+        const { events } = this.props;
+        // this.props.navigation.navigate('InviteModal', { eventId: this.eventId, invited: events[this.eventId].invited, colorScheme: Styles.defaultColorScheme })
+        this.props.navigation.navigate('InviteFriends', { eventId: this.eventId, event: events[this.eventId], handleAfterFinish: () => this.props.navigation.pop(1) });
     }
 
     changeTitle() {
@@ -50,8 +47,8 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
     }
 
     render() {
-        const { myId, firstName, lastName, avatar, events, friends } = this.props;
-        if (!this.props.events[this.eventId]) {
+        const { myId, firstName, lastName, avatar, events, users } = this.props;
+        if (!events[this.eventId]) {
             return (<View />)
         }
         const { name, publicInvite, startDate, endDate, location, description, invited } = events[this.eventId];
@@ -68,24 +65,30 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
                             <Text style={[Styles.cardSubheaderText, {color: getTimeColor(startDate)}]}>{getTimeString(startDate, endDate)}</Text>
                         </View>
                         
-                        <Button
-                            onPress={() => this.props.navigation.navigate('InviteFriends', { eventId: this.eventId, event: events[this.eventId] })}
-                            style={{flex: 1, paddingLeft: 10, justifyContent: 'flex-end', alignItems: 'flex-end'}}
-                        >
-                            {othersInvited.length > 0 ? (
+                        
+                        {othersInvited.length > 0 ? (
+                            <Button
+                                onPress={() => this.props.navigation.navigate('InvitedList', { eventId: this.eventId, invited: events[this.eventId].invited })}
+                                style={{flex: 1}}
+                            >
                                 <StackedAvatar
                                     users={Object.keys(othersInvited).reduce(function(result, key) {
                                         const username = othersInvited[key];
-                                        result[username] = {avatar: friends[username].avatar}
+                                        result[username] = {avatar: users[username].avatar}
                                         return result
-                                      }, {})}
+                                        }, {})}
                                 />
-                            ) : (
+                            </Button>
+                        ) : (
+                            <Button
+                                onPress={this.openInviteModal}
+                                style={{flex: 1, paddingLeft: 10, justifyContent: 'flex-end', alignItems: 'flex-end'}}
+                            >
                                 <Card backgroundColor={this.colorScheme.lightColor} style={{marginRight: 0, marginLeft: 0, marginBottom: 0}}>
                                     <Text style={[Styles.cardSubheaderText, {color: this.colorScheme.darkColor, textAlign: 'center'}]}>Invite Friends</Text>
                                 </Card>
-                            )}
-                        </Button>
+                            </Button>
+                        )}
                     </View>
                 )}
                 finishComponent={
@@ -109,7 +112,7 @@ class EventOverview extends React.Component<EventOverviewProps | any> {
 const mapStateToProps = (state) => {
     return {
       events: state.events,
-      friends: state.friends,
+      users: state.users,
       myId: state.myId,
       firstName: state.firstName,
       lastName: state.lastName,
@@ -118,7 +121,7 @@ const mapStateToProps = (state) => {
 };
   
 const mapDispatchToProps = {
-    removeEvents
+    // removeEvents
 };
   
 export default connect(

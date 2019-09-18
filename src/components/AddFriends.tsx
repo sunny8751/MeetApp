@@ -3,26 +3,21 @@ import * as Styles from '../styles/styles';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import { AntDesign } from '@expo/vector-icons';
-import { addFriends, removeFriends } from '../actions/Actions';
+// import { addFriends, removeFriends } from '../actions/Actions';
 import { Card, Container, View, Text, Header, Button, ScrollView, TextInput, FriendSelect } from './UI';
 import database from '../database/Database';
 import _ from 'lodash';
+import { getFriends, isMe } from '../utils/Utils';
 
 export interface AddFriendsProps {
 }
 
 class AddFriends extends React.Component<AddFriendsProps | any> {
-    static navigationOptions = {
-        header: null,
-    }
-
     _isMounted = false;
     colorScheme: any;
     
     constructor(props) {
         super(props);
-        this.isFriend = this.isFriend.bind(this);
-        this.isMe = this.isMe.bind(this);
         this.handleOnFinish = this.handleOnFinish.bind(this);
         this.handleChangeText = this.handleChangeText.bind(this);
         this.getFriendSuggestions = this.getFriendSuggestions.bind(this);
@@ -32,7 +27,7 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
         this.selectFriend = this.selectFriend.bind(this);
         this.state = {
             searchText: '',
-            suggestions: this.props.friends,
+            suggestions: getFriends(),
             refresh: false
         };
         this.colorScheme = Styles.defaultColorScheme;
@@ -57,23 +52,15 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
 
     selectFriend(friendId) {
         console.log('select', friendId);
-        const friend = this.props.friends[friendId]; // TODO may not be friend
+        const friend = this.props.users[friendId]; // TODO may not be friend
         this.props.navigation.navigate('ProfileModal', {userId: friendId, user: friend, colorScheme: this.colorScheme});
-    }
-
-    isFriend(friendId) {
-        return friendId in this.props.friends;
-    }
-
-    isMe(friendId) {
-        return friendId === this.props.myId;
     }
 
     async updateFriendSuggestions(friendId) {
         let suggestions;
         if (friendId) {
             const friend = await database.getUser(friendId);
-            if (!friend || this.isMe(friendId)) {
+            if (!friend || isMe(friendId)) {
                 // no results for friendId
                 return;
             }
@@ -82,7 +69,7 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
             }
         } else {
             // auto recommendations
-            suggestions = this.props.friends;
+            suggestions = getFriends();
         }
         if (this._isMounted) { // && friendId === this.state.searchText
             this.setState({
@@ -93,18 +80,18 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
 
     addFriend(friendId: string, friend: any) {
         console.log('add', friendId);
-        database.addFriend(this.props.myId, friendId);
-        this.props.addFriends({[friendId]: friend});
+        database.addFriend(this.props.myId, friendId, friend);
+        // this.props.addFriends({[friendId]: friend});
     };
 
-    removeFriend(friendId: string) {
+    removeFriend(friendId: string, friend: any) {
         console.log('remove', friendId);
-        database.removeFriend(this.props.myId, friendId);
-        this.props.removeFriends([friendId]);
+        database.removeFriend(this.props.myId, friendId, friend);
+        // this.props.removeFriends([friendId]);
     };
 
     componentDidUpdate(prevProps) {
-        if(this.props.friends != prevProps.friends) {
+        if(this.props.users != prevProps.users) {
             this.setState({refresh: !this.state.refresh});
         }
     } 
@@ -114,8 +101,8 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
         return (
             Object.keys(suggestions).sort().map((friendId: string) => {
                 // TODO: use user id instead
-                const selected = this.isFriend(friendId);
                 const friend = suggestions[friendId];
+                const selected = friend.isFriend;
                 return (
                     <FriendSelect
                         user={friend}
@@ -124,7 +111,7 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
                         key={friendId}
                         onPress={() => this.selectFriend(friendId)}
                         selectedElement={
-                            <Button onPress={() => this.removeFriend(friendId)}  style={Styles.center}>
+                            <Button onPress={() => this.removeFriend(friendId, friend)}  style={Styles.center}>
                                 <Card style={[Styles.headerButton, Styles.horizontalLayout, {padding: 10, marginBottom: 0, marginRight: 0, marginLeft: 0, backgroundColor: Styles.colors.red}]}>
                                     <AntDesign name="deleteuser" size={20} style={{ paddingRight: 4 }}/>
                                     <Text style={[Styles.cardSubheaderText, {color: this.colorScheme.darkColor}]}>Remove</Text>
@@ -175,13 +162,14 @@ class AddFriends extends React.Component<AddFriendsProps | any> {
 const mapStateToProps = (state) => {
     return {
         myId: state.myId,
-        friends: state.friends,
+        // friends: state.friends,
+        users: state.users
     };
 };
 
 const mapDispatchToProps = {
-    addFriends,
-    removeFriends
+    // addFriends,
+    // removeFriends
 };
   
 export default connect(

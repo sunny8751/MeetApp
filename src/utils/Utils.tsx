@@ -3,6 +3,28 @@ import * as Styles from '../styles/styles';
 import Color from 'color';
 import moment from 'moment';
 import ImagePicker from 'react-native-image-picker';
+import { store } from '../../App';
+
+let users = {};
+let friends = {};
+console.log("set friends");
+export const getFriends = () => {
+    if (users != store.getState()['users']) {
+        users = store.getState()['users'];
+        friends = {};
+        for (const id of Object.keys(users)) {
+            if (users[id].isFriend) {
+                friends[id] = users[id];
+            }
+        }
+        console.log("update friends", friends);
+    }
+    return friends;
+}
+
+export const isMe = (userId) => {
+    return userId === store.getState()['myId'];
+}
 
 export const getDarkerColor = (color=Styles.colors.grey, colorMultiplier=0.2) => {
     // return pSBC(-colorMultiplier, color);
@@ -52,7 +74,7 @@ export const addAvatar = async (setAvatar) => {
             skipBackup: true,
             path: 'images',
         },
-        quality: 0.5,
+        quality: 0.2,
     };
     ImagePicker.showImagePicker(options, async (response) => {
         if (response.didCancel) {

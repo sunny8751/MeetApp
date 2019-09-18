@@ -3,6 +3,7 @@ import * as Styles from '../../styles/styles';
 import { Ionicons } from '@expo/vector-icons';
 import { TextInputCard, Card, Container, View, Text, Header, Button, ScrollView, Chat } from './';
 import { TouchableWithoutFeedback } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
 import { BlurView } from '@react-native-community/blur';
 
 export interface ModalProps {
@@ -30,17 +31,17 @@ class Modal extends React.Component<ModalProps | any> {
 
     render() {
         const { style, title, handleClose, colorScheme, flexSize, topFlexSize, bottomFlexSize } = this.props;
-        const headerButtonStyle = [Styles.headerButton, { backgroundColor: colorScheme.mediumColor }];
-        console.log(style);
+        const headerButtonStyle = [Styles.headerButton, { backgroundColor: colorScheme.lightColor }];
         return (
-            <BlurView blurType="light" blurAmount={20} style={Styles.fullscreenAbsolute}>
-                <View style={{ flex: 1 ,flexDirection: 'column', justifyContent: 'flex-end', backgroundColor: 'transparent'}}>
+            <SafeAreaView style={{flex: 1}}>
+            {/* <BlurView blurType="dark" blurAmount={20} style={Styles.modal}> */}
                     <TouchableWithoutFeedback onPress={handleClose}>
                         <View style={{flex: topFlexSize}}/>
                     </TouchableWithoutFeedback>
 
                     <Container
-                        style={[{flex: flexSize, backgroundColor: colorScheme.lightColor, borderRadius: 15}, style]}
+                        style={[{flex: flexSize, backgroundColor: Styles.colors.white, borderRadius: 15}, style]}
+                        disableSafeAreaView
                         headerOverride = {
                             <View style={[Styles.leftRightView, {padding: 20}]}>
                                 <Text style={[Styles.headerTitle, {paddingTop: 5, color: colorScheme.darkColor}]}>{title}</Text>
@@ -68,8 +69,8 @@ class Modal extends React.Component<ModalProps | any> {
                     <TouchableWithoutFeedback onPress={handleClose}>
                         <View style={{flex: bottomFlexSize}}/>
                     </TouchableWithoutFeedback>
-                </View>
-            </BlurView>
+            {/* </BlurView> */}
+            </SafeAreaView>
         );
     }
 }

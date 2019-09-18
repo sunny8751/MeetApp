@@ -7,7 +7,7 @@ import { addMessages, removeMessageEvents, setMessages } from '../../actions/Act
 import * as Constants from '../../constants/Constants';
 import { GiftedChat } from 'react-native-gifted-chat';
 import emojiUtils from 'emoji-utils';
-import { View } from './';
+import { View } from '.';
 import ChatMessage from './ChatMessage';
 import database from '../../database/Database';
 
@@ -25,6 +25,7 @@ class Chat extends React.Component<ChatProps | any> {
         this.formatMessages = this.formatMessages.bind(this);
         this.listener = this.listener.bind(this);
         this.handleLoadEarlier = this.handleLoadEarlier.bind(this);
+        this.convertUser = this.convertUser.bind(this);
         this.state = {
             refresh: false,
         };
@@ -63,9 +64,8 @@ class Chat extends React.Component<ChatProps | any> {
     }
 
     formatMessages(messages: any[], numMessages: number, reverseIndices=false) {
-        const { eventId, friends, myId, firstName, lastName, avatar } = this.props;
+        const { eventId, users, myId, firstName, lastName, avatar } = this.props;
         return messages.map(({senderId, text, createdAt}, index) => {
-            const sender = senderId === myId ? {firstName, lastName, avatar} : friends[senderId];
             const messagesLength = this.props.messages[eventId] ? this.props.messages[eventId].messages.length : 0;
             const messageId = reverseIndices ? 
                 numMessages - messagesLength - messages.length + index :
@@ -74,11 +74,7 @@ class Chat extends React.Component<ChatProps | any> {
                 _id: messageId,
                 text,
                 createdAt,
-                user: {
-                    _id: senderId,
-                    name: sender.firstName + ' ' + sender.lastName,
-                    avatar: sender.avatar
-                }
+                user: this.convertUser(senderId)
             }
         });
     }
@@ -132,6 +128,18 @@ class Chat extends React.Component<ChatProps | any> {
         );
     }
 
+    convertUser(userId) {
+        const { myId, firstName, lastName, avatar, users } = this.props;
+        const user = userId === myId ? {firstName, lastName, avatar} : users[userId];
+        return {
+            _id: userId,
+            name: user.firstName + ' ' + user.lastName,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            avatar: user.avatar
+        };
+    }
+
     render() {
         const { myId, firstName, lastName, avatar, eventId } = this.props;
 
@@ -144,11 +152,7 @@ class Chat extends React.Component<ChatProps | any> {
             <GiftedChat
                 messages={messages}
                 onSend={messages => this.onSend(messages)}
-                user={{
-                    _id: myId,
-                    name: firstName + ' ' + lastName,
-                    avatar: avatar
-                }}
+                user={this.convertUser(myId)}
                 // renderMessage={this.renderMessage}
                 listViewProps={{
                     keyboardShouldPersistTaps: 'handled',
@@ -164,7 +168,7 @@ class Chat extends React.Component<ChatProps | any> {
 
 const mapStateToProps = (state) => {
     return {
-      friends: state.friends,
+      users: state.users,
       myId: state.myId,
       firstName: state.firstName,
       lastName: state.lastName,

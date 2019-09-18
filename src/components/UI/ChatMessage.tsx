@@ -43,6 +43,13 @@ class ChatMessage extends React.Component {
         return <ChatBubble {...bubbleProps} />;
     }
 
+    /**
+     * user: {
+     *      _id: 2,
+     *      name: 'React Native',
+     *      avatar: 'https://placeimg.com/140/140/any',
+     *    },
+     */
     renderAvatar() {
         let extraStyle;
         if (

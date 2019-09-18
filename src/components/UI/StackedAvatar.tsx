@@ -15,12 +15,13 @@ class StackedAvatar extends React.Component<StackedAvatarProps | any> {
 
         this.state = {
             containerWidth: undefined,
-            avatarWidth: 45
+            avatarWidth: 45,
+            avatarPadding: 10,
         }
     }
 
     static defaultProps = {
-        minMargin: -30
+        minMargin: -40
     }
 
     getStackedAvatar() {
@@ -65,8 +66,9 @@ class StackedAvatar extends React.Component<StackedAvatarProps | any> {
         const userIds = Object.keys(users);
         const numShown = Math.min(userIds.length, maxNumber || Math.floor((this.state.containerWidth+minMargin)/(this.state.avatarWidth+minMargin)));
         
-        let marginRight = 0;
-        let overflowSize = numShown * this.state.avatarWidth - this.state.containerWidth;
+        const avatarSize =  this.state.avatarWidth + this.state.avatarPadding;
+        let marginRight =  -this.state.avatarPadding;
+        let overflowSize = numShown * avatarSize - this.state.containerWidth;
         if (overflowSize > 0) {
             marginRight = overflowSize / (numShown - 1);
         }
@@ -74,7 +76,6 @@ class StackedAvatar extends React.Component<StackedAvatarProps | any> {
         const stackedAvatarsElement = 
             userIds.slice(0, numShown).slice(0, numShown).reverse().map((userId: string) => {
                 const user = users[userId];
-                const { avatar } = user;
                 return (
                     <View
                     // paddingLeft: 5
@@ -82,7 +83,7 @@ class StackedAvatar extends React.Component<StackedAvatarProps | any> {
                         key={userId}
                     >
                         <Avatar
-                            source={avatar}
+                            user={user}
                             size={this.state.avatarWidth}
                             style={{ borderWidth: 2, borderColor: 'white'}}
                             // onLayout={(event) => {
@@ -117,7 +118,7 @@ class StackedAvatar extends React.Component<StackedAvatarProps | any> {
         const { users, maxAvatars, style, ...rest } = this.props;
         return (
             <View
-                style={[{flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end', marginLeft: 50}, style]}
+                style={[{flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end', marginLeft: 20}, style]}
                 onLayout={(event) => {
                     if (!this.state.containerWidth) {
                         this.setState({

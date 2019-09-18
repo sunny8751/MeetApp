@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { withNavigation } from 'react-navigation';
 import { Feather } from '@expo/vector-icons';
-import { addEvents, setEvents } from '../actions/Actions';
+// import { addEvent, setEvents } from '../actions/Actions';
 import { View, Text, Button, Card } from './UI';
 import { getTimeString, getTimeColor } from '../utils/Utils';
 
@@ -66,8 +66,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = {
-    addEvents,
-    setEvents
+    // addEvents,
+    // setEvents
 };
 
 export default connect(

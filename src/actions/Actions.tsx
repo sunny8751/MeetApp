@@ -8,8 +8,8 @@ export const setAvatar = (avatar: string) => {
     return { type: Constants.SET_AVATAR, avatar }
 };
 
-export const addEvents = (events: any) => {
-    return { type: Constants.ADD_EVENTS, events }
+export const addEvent = (event: any) => {
+    return { type: Constants.ADD_EVENT, event }
 };
 
 export const removeEvents = (eventIds: string[]) => {
@@ -20,20 +20,24 @@ export const setEvents = (events: any) => {
     return { type: Constants.SET_EVENTS, events }
 };
 
-export const updateEvent = (eventId: string, event: any) => {
-    return { type: Constants.UPDATE_EVENT, eventId, event }
+export const updateEvent = (event: any) => {
+    return { type: Constants.UPDATE_EVENT, event }
 };
 
-export const addFriends = (friends: any) => {
-    return { type: Constants.ADD_FRIENDS, friends }
+export const addUsers = (users: any) => {
+    return { type: Constants.ADD_USERS, users }
 };
 
-export const removeFriends = (friendIds: string[]) => {
-    return { type: Constants.REMOVE_FRIENDS, friendIds }
+export const removeUsers = (userIds: string[]) => {
+    return { type: Constants.REMOVE_USERS, userIds }
 };
 
-export const setFriends = (friends: any) => {
-    return { type: Constants.SET_FRIENDS, friends }
+export const setUsers = (users: any) => {
+    return { type: Constants.SET_USERS, users }
+};
+
+export const updateUser = (user: any) => {
+    return { type: Constants.UPDATE_USER, user }
 };
 
 export const setFirstName = (firstName: any) => {

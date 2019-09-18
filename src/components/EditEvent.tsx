@@ -15,11 +15,6 @@ import { getNextHour, getFormattedTimeString, getTimeElapsed } from '../utils/Ut
 **/
 
 class EditEvent extends React.Component<any> {
-    static navigationOptions = {
-        // headerTitleStyle: Styles.headerTitleStyle
-        header: null
-    };
-
     handleOnFinish: () => {};
     title: string;
     finishText: string;
@@ -28,11 +23,13 @@ class EditEvent extends React.Component<any> {
         super(props);
         this.getPublicInviteInput = this.getPublicInviteInput.bind(this);
         this.isFinished = this.isFinished.bind(this);
+        
+        let startEvent = {};
+        ({ startEvent, handleOnFinish: this.handleOnFinish, title: this.title, finishText: this.finishText } = this.props.navigation.state.params);
         this.state = {
-            ...this.props.navigation.getParam('startEvent', {})
+            ...startEvent
         };
 
-        ({ handleOnFinish: this.handleOnFinish, title: this.title, finishText: this.finishText } = this.props.navigation.state.params);
     }
 
     isFinished() {
